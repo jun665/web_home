@@ -1,0 +1,614 @@
+<html>
+	<head>
+		<meta charset="utf-8">
+		<link rel="icon" href="../../source/imgs/favicon.ico">
+		<title>足球选号助手</title>
+		<script src="../../cdn/vue.js"></script>
+		<!-- ElementUI引入样式 -->
+		<link rel="stylesheet" href="../../cdn/element-ui/element-index.css"/>
+		<!-- ElementUI引入组件库 -->
+		<script src="../../cdn/element-ui/element-index.js"></script>
+		<!-- axios -->
+		<script src="../../cdn/axios.min.js"></script>
+		<!-- 复制粘贴 -->
+		<script src="../../cdn/vue-clipboard.js"></script>
+		<style type="text/css">
+			.tCard {
+				 background: -webkit-gradient(linear, 70% 100%, 100% 100%,from(#eeffe4), to(#eef8ed)); !important;
+			}
+			.el-table .success-row {
+				background: #dff9cd;
+			}
+			.tagStyle {
+				width: 60px;
+				cursor: pointer !important;
+			}
+			.selectRow{
+				display: flex;
+				margin: 10px 0 10px 0;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="app">
+			<div style="display: flex;">
+				<el-card shadow="hover" class="tCard"  style="margin: 20px 5px 10px 0;width: calc(50% - 5px);">
+					<el-button type="primary">选号配置</el-button>
+					<!-- 天数范围 -->
+					<div class="selectRow">
+						<div style="width: 100px; ">
+							<span>天数范围：</span>
+						</div>
+						<div>
+							<el-checkbox-group v-model="conf.days" :min="1" size="small">
+								<el-checkbox @change="dayChange" v-for="(value, index) in tablesDatas" :checked="conf.days.includes(index + '')" :label="index" :key="index">{{value.weekday}}</el-checkbox>
+							</el-checkbox-group>
+						</div>
+					</div>
+					<!-- 类型范围 -->
+					<div class="selectRow">
+						<div style="width: 100px;">
+							<span>类型范围：</span>
+						</div>
+						<div>
+							<el-checkbox-group v-model="conf.type" :min="1" size="small">
+								<el-checkbox v-for="(value, index) in [
+									{key: 'h', name:'普通'},
+									{key: 'hh', name:'让球'},
+								]" :label="value.key" :key="value.key">{{value.name}}</el-checkbox>
+							</el-checkbox-group>
+						</div>
+					</div>
+					<!-- 胜负范围 -->
+					<div class="selectRow">
+						<div style="width: 100px;">
+							<span>胜负范围：</span>
+						</div>
+						<div>
+							<el-checkbox-group v-model="conf.value_type" :min="1" size="small">
+								<el-checkbox v-for="(value, index) in [
+									{key: 'h', name:'胜利'},
+									{key: 'd', name:'平局'},
+									{key: 'a', name:'失败'},
+									{key: 'hd', name:'胜平'},
+									{key: 'da', name:'负平'},
+									{key: 'ha', name:'胜负'},
+								]" :label="value.key" :key="value.key">{{value.name}}</el-checkbox>
+							</el-checkbox-group>
+						</div>
+					</div>
+					<!-- 串联场次 -->
+					<div class="selectRow">
+						<div style="width: 100px;">
+							<span>串联场次：</span>
+						</div>
+						<div>
+							<el-radio v-model="conf.num" v-for="(value, index) in numEnum" :min="1" :label="value" :key="value">{{value > 0 ? value : '随机'}}场</el-radio>
+						</div>
+					</div>
+							
+				</el-card>
+				<el-card shadow="hover" class="tCard"  style="margin: 20px 0px 10px 5px;width: calc(50% - 5px);">
+					<el-button effect="dark" type="primary" @click="randomSelectRow">随机单场</el-button>
+					<el-button effect="dark" type="primary" @click="randomSelectRows">全部生成</el-button>
+					<el-button effect="dark" type="danger" @click="clear()">清空</el-button>
+					<el-button effect="dark" type="success" v-clipboard:copy="selectStr" style="float: right;">复制</el-button>
+					</br>
+					<span>可选/已选：{{conf.num}}/{{selectTotal}}</span>
+					<span style="float: right;">最高倍数：{{ computeRateMax }}</span>
+					<el-input style="margin-top: 5px;" type="textarea" :autosize="{ minRows: 6, maxRows: 10}"  v-model="selectStr"> </el-input>
+				</el-card>
+			</div>
+			
+			
+			<div v-for="(pItem, pIndex) in tablesDatas" :key="pIndex" style="cursor: pointer !important;">
+				<el-tag style="margin: 20px 0 10px 0;" effect="dark">{{pItem.businessDate + '(' + pItem.weekday +')' + " 共" + pItem.matchCount + '场比赛'}}</el-tag >
+				<el-card shadow="hover"> 
+					<el-table :data="pItem.subMatchList" :row-class-name="selectRowStyle" :key="tk">
+						
+						 <el-table-column label="赛事编号"  width="100" header-align="center" align="center">
+							 <template slot-scope="scope">
+							 	 <span>{{ scope.row.matchNumStr }}</span>
+							 </template>
+						 </el-table-column>
+						 
+						 <el-table-column label="赛事"width="100" header-align="center" align="center">
+							 <template slot-scope="scope">
+							 	<el-tag  effect="dark">{{ scope.row.leagueAbbName }}</el-tag>
+							 </template>
+						 </el-table-column>
+						 
+						 <el-table-column label="开赛时间" width="100" header-align="center" align="center">
+							 <template slot-scope="scope">
+								 {{ scope.row.matchTime }}
+							</template>
+						 </el-table-column> 
+						 
+						 <el-table-column label="主队VS客队"  header-align="center" align="center" min-width="350">
+							 <template slot-scope="scope" >
+								<el-tag v-if=" scope.row.homeRank" effect="plain" type="info">{{ scope.row.homeRank }}</el-tag>
+								<el-tag effect="plain">{{ scope.row.homeTeamAbbName + ' VS ' + scope.row.awayTeamAbbName }}</el-tag>
+								<el-tag v-if=" scope.row.awayRank" effect="plain" type="info">{{ scope.row.awayRank }}</el-tag>
+							 </template>
+						 </el-table-column>
+						
+						<el-table-column label="胜平负" header-align="center" align="center" width="250">
+							<template slot-scope="scope" >
+								<div v-if="scope.row.had">
+									<el-tag class="tagStyle" :effect="selectColStyle(scope.row, 'h', 'h')" @click="selectItem(scope.row, 'h', 'h', pIndex)" type="success">{{ scope.row.had.h }}</el-tag>
+									<el-tag class="tagStyle" :effect="selectColStyle(scope.row, 'h', 'd')" @click="selectItem(scope.row, 'h', 'd', pIndex)" type="info">{{ scope.row.had.d }}</el-tag>
+									<el-tag class="tagStyle" :effect="selectColStyle(scope.row, 'h', 'a')" @click="selectItem(scope.row, 'h', 'a', pIndex)" type="danger">{{ scope.row.had.a }}</el-tag>
+								</div>
+								<div v-else>
+									<el-tag type="info">未开售</el-tag>
+								</div>
+								
+							</template>
+						 </el-table-column>
+						
+						 <el-table-column :label="'让球胜平负'" header-align="center" align="center" width="250">
+							 <template slot-scope="scope" >
+								<div v-if="scope.row.hhad">
+									<el-tag class="tagStyle" :effect="selectColStyle(scope.row, 'hh', 'h') " @click="selectItem(scope.row, 'hh', 'h', pIndex)" type="success">{{ scope.row.hhad.h }}</el-tag>
+									<el-tag class="tagStyle" :effect="selectColStyle(scope.row, 'hh', 'd') " @click="selectItem(scope.row, 'hh', 'd', pIndex)" type="info">{{ scope.row.hhad.d }}</el-tag>
+									<el-tag class="tagStyle" :effect="selectColStyle(scope.row, 'hh', 'a') " @click="selectItem(scope.row, 'hh', 'a', pIndex)" type="danger">{{ scope.row.hhad.a }}</el-tag>
+								</div>
+								<div v-else>
+									<el-tag type="info">未开售</el-tag>
+								</div>
+							 </template>
+						 </el-table-column>
+						 <el-table-column :label="'让数'" header-align="center" align="center" width="100">
+							<template slot-scope="scope" >
+								<el-tag effect="dark" class="tagStyle" v-if="scope.row.hhad" :type="scope.row.hhad.goalLine > 0 ? 'success': scope.row.hhad.goalLine < 0 ? 'danger' : 'info'">
+									{{ scope.row.hhad.goalLine }}
+								</el-tag>
+							</template>
+						 </el-table-column>
+						 
+					</el-table>
+				</el-card>
+				
+			</div>
+
+		</div>
+		<script type="text/javascript">
+			new Vue({el:"#app",
+
+
+				computed: {
+					// 场次枚举
+					numEnum(){
+						let enums = []
+						let max = 8
+						
+						// 根据选择的日子来计算总场次
+						let num = 0
+						for(let i=0; i < this.conf.days.length;i++){
+							let item = this.conf.days[i]
+							let data = this.tablesDatas[item]
+							if(data){
+								num += data.matchCount
+							}
+							
+						}
+						// 计算可选最大值
+						if(max > num){
+							max = num
+						}
+						// 获得枚举
+						for(let i=0; i < max; i++){
+							enums.push(i + 1)
+						}
+						// enums.push(-1)
+						return enums
+						
+					},
+					// 倍率
+					computeRateMax(){
+						let rate = 1
+						let num = this.selectTotal
+						if(num > 0){
+							let rows = this.alreadySelectRows()
+							let rowRates = []
+							for (let row of rows) {
+								// 获得已选倍率列表
+								let items = []
+								let type = row['ids1'] && row['ids1'].length > 0 ? 'had' : 'hhad'
+								let ids = type === 'had' ? row['ids1'] : row['ids2']
+								for (let val of ids) {
+									items.push(row[type][val])
+								}
+								// 取最大倍数
+								rowRates.push(Math.max(...items))
+							}
+							// 计算倍数
+							for (let rowRate of rowRates) {
+								rate = rate * rowRate
+							}
+						}
+						return rate
+					},
+				},
+			    data:{
+					// 已选场次
+					selectStr: '',
+					selectTotal: 0,
+					
+					
+					
+					// 生成配置
+					conf:{
+						// 天数配置
+						days: [0], 
+						// 让球配置
+						type: ['h'],  
+						// 胜负范围
+						value_type: ['h', 'd', 'a'],
+						// 串联场次, -1表示范围内随机
+						num: 1,
+					},
+					// haveNum: 0,
+					// 刷新
+					tk: -1000000,
+
+					// 今天、明天、后天 item.subMatchList 是数据
+					tablesDatas: [
+						{
+							businessDate: "2023-04-16",
+							weekday: "周日",
+							matchCount: 20,
+							subMatchList: [
+								{
+									matchNumStr: '周日001',
+									leagueAbbName: '意甲',
+									select: true,          // 是否选择本场
+									ids1: ['h', 'd', 'a', 'hb', 'ab'],              // 选择普通
+									ids2: [],              // 选择让球
+								}
+							]
+						}
+					],
+			  	},
+				created(){
+					this.loadData()
+					
+				},
+				methods: {
+					
+					// builder ===================================
+					
+					// 获得单行文字
+					buildSelectRowStr(row){
+						if(!this.isSelectRow(row)){
+							return ''
+						}
+						let strPre = ''
+						let list = row.ids1
+						if(row.ids2 && row.ids2.length > 0){
+							list = row.ids2
+							strPre = '让'
+						}
+						let str = ''
+						for (let item of list) {
+							let itemStr = ''
+							switch(item) {
+								case 'h': itemStr = '胜'; break;
+								case 'd': itemStr = '平'; break;
+								case 'a': itemStr = '负'; break;
+							}
+							str = str + ',' + itemStr
+						}
+						return `${row.matchNumStr.slice("周一".length)} ${strPre}(${str.slice(1)})`
+					},
+					
+					// 获得多行文字
+					buildSelectStr(){
+						let listStr = []
+						let datas = this.tablesDatas
+						for (let table of datas) {
+							let rows = table.subMatchList
+							for (let row of rows) {
+								if(this.isSelectRow(row)){
+									listStr.push(this.buildSelectRowStr(row))
+								}
+							}
+						}
+						return listStr.join("\n")
+					},
+					
+					
+					// check  ======================================
+					
+					// 可供选择的总行数
+					countRowTotal(days) {
+						let total = 0
+						for (let day of days) {
+							total = total + this.tablesDatas[day].subMatchList.length
+						}
+						return total
+					},
+					
+					// 当前未选择的日、行号 map
+					noSelectRaceMap(dayList) {
+						// 已选择总行数
+						let selectNum = 0
+						let map = {}
+						for (let day of dayList) {
+							const dataRows = this.tablesDatas[day].subMatchList
+							const rowIndexs = []
+							for (let i in dataRows) {
+								if(!this.isSelectRow(dataRows[i])) {
+									rowIndexs.push(i)
+								} else {
+									selectNum++
+								}
+							}
+							if(rowIndexs.length > 0){
+								map[day] = rowIndexs
+							}
+						}
+						return map
+					},
+					
+					// 当前未选择的日 list
+					noSelectDay(map){
+						let days = []
+						for(let key in map) {
+							days.push(key)
+						}
+						return days
+					},
+					
+					// 行是否被选择
+					isSelectRow(row){
+						return  (row.ids1 && row.ids1.length > 0) || (row.ids2 && row.ids2.length > 0 )
+					},
+					
+					// 已选择的行， rowList
+					alreadySelectRows(){
+						let rows = []
+						let dayList = this.conf.days
+						for (let day of dayList) {
+							const dataRows = this.tablesDatas[day].subMatchList
+							for (let row of dataRows) {
+								if(this.isSelectRow(row)) {
+									rows.push(row)
+								} 
+							}
+							
+						}
+						return rows
+					},
+					
+					
+					// select =======================================
+					
+					// 选择1个选项：点击选择， 单个'胜'负'平'像
+					selectItem(row, type, value, tIndex) {
+						// 无选择项变成有选择项时，行数+1， 这里处理新增行事件
+						if(!this.isSelectRow(row)){
+							// 超过最大行数
+							if(this.selectTotal >= this.conf.num){
+								this.$message.error('选择场数已经达到最大!')
+								return
+							}
+							this.selectTotal = this.selectTotal + 1
+						}
+						// 新增一项
+						let ids1 = row.ids1  || [] // h
+						let ids2 = row.ids2  || [] // hh
+						
+						// 不让球
+						if(type === 'h'){
+							if(ids2 && ids2.length > 0){
+								this.$message.error("一场比赛只能选择一种游戏进行串关计算；如计算单关，请删除已选的未开单关的选项！")
+								return
+							}
+							this.changeListItem(ids1, value)
+							row['ids1'] = ids1
+
+						}
+						
+						// 让球
+						if(type === 'hh') {
+							if(ids1 && ids1.length > 0){
+								this.$message.error("一场比赛只能选择一种游戏进行串关计算；如计算单关，请删除已选的未开单关的选项！")
+								return
+							}
+							this.changeListItem(ids2, value)
+							row['ids2'] = ids2
+						}
+						// 如果操作后，没有选择的项，则表示删除行
+						if(!this.isSelectRow(row)){
+							this.selectTotal = this.selectTotal - 1
+						}
+						
+						this.selectStr = this.buildSelectStr()
+						
+						// 刷新
+						this.flushedTable(tIndex)
+					},
+					
+					// 选择1个选项：代码选择，根据index
+					selectItemIndex(tIndex, rowIndex, type, value) {
+						let table = this.tablesDatas[tIndex]
+						let row = table.subMatchList[rowIndex]
+						this.selectItem(row, type, value, tIndex)
+					},
+					
+					// 随机选择一行
+					randomSelectRow(){
+						let dayMap = this.noSelectRaceMap(this.conf.days)
+						let days = this.noSelectDay(dayMap)
+						
+						if(days.length == 0) {
+							this.$message.warning('所有场次已全部选择!')
+							return 
+						}
+						
+						// 确定日期
+						let randomDayI = this.randomList(days)
+						
+						// 确定行号
+						let rows = dayMap[randomDayI]
+						let randomRowI = this.randomList(rows)
+						
+						// 确定是否让球
+						let type = this.randomList(this.conf.type)
+						
+						// 确定选项值、确定选项列表， hd 要分成 h、d
+						let value = this.randomList(this.conf.value_type)
+						let values = value.split('')
+						
+						// 选择选项
+						for (let val of values) {
+							this.selectItemIndex(randomDayI, randomRowI, type, val)
+						}
+					},
+					
+					// 随机选择最全部行
+					randomSelectRows() {
+						this.clear()
+						
+						let num = this.conf.num
+						for (var i = 0; i < num; i++) {
+							this.randomSelectRow()
+						}
+						
+						
+					},
+					
+					
+					
+					
+					
+					
+					
+					
+					// style ========================================
+					
+					// 行选择样式
+					selectRowStyle({row, rowIndex}){
+						return this.isSelectRow(row) ? 'success-row' : ''
+					},
+					// 单元格选择样式
+					selectColStyle(row, type, value) {
+						let list = type === 'h' ? row.ids1 : row.ids2
+						if(!list) {
+							return 'plain'
+						}
+						return list.includes(value) ? 'dark' : 'plain'
+						
+					},
+					
+					
+					
+					
+					
+					
+					
+					
+					// tableData =====================================
+					
+					// 加载表格数据
+					async loadData(){
+						let that = this
+						let url = 'https://webapi.sporttery.cn/gateway/jc/football/getMatchCalculatorV1.qry?poolCode=hhad,had&channel=c'
+						axios.get(url).then(await function(res){
+							const data = res.data.value
+							if(data){
+								that.tablesDatas = data.matchInfoList
+								that.initConfNum()
+							}
+						})
+					},
+					
+					// 清空选择，重置数据
+					async clear() {
+						this.selectStr = ''
+						this.selectTotal = 0
+						// 删除选择状态
+						let tables = this.tablesDatas
+						for (let i in tables) {
+							let rows = tables[i].subMatchList
+							for (let row of rows) {
+								row['ids1'] = []
+								row['ids2'] = []
+							}
+							this.flushedTable(i)
+						}
+						
+						
+					},
+					
+					// 刷新表格
+					flushedTable(tableIndex){
+						this.tablesDatas[tableIndex].subMatchList.push({})
+						this.tablesDatas[tableIndex].subMatchList.pop()
+						// 显示有问题
+						this.tk = this.tk + 1
+					},
+					
+					// 初始化默认生成场次
+					initConfNum(){
+						let total = this.countRowTotal(this.conf.days)
+						let num = 8
+						if(total < num){
+							num = total
+						}
+						this.conf.num = num
+					},
+					
+					
+					
+					// util ==========================================
+					
+					// 从List中随机选择一个元素
+					randomList(list){
+						let r = Math.floor(Math.random() * list.length)
+						return list[r]
+					},
+					
+					// list 元素取反， 存在则删除、不存在则新增
+					changeListItem(list, item){
+						if(list.includes(item)){
+							list.splice(list.indexOf(item), 1)
+						} else {
+							list.push(item)
+						}
+					},
+					
+					// 睡眠
+					sleep(time) {
+						return new Promise((resolve) => setTimeout(resolve, time));
+					},
+				
+					// event =============================================
+					dayChange(){
+						this.initConfNum()
+					},
+					
+				
+				}
+
+			
+				
+
+
+
+
+
+
+
+			})
+		</script>
+		
+	</body>
+
+
+
+
+
+
+</html>

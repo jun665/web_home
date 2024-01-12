@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="../../cdn/vue.js"></script>
+    <!-- ElementUI引入样式 -->
+    <link rel="stylesheet" href="../../cdn/element-ui/element-index.css"/>
+    <script src="../../cdn/element-ui/element-index.js"></script>
+    <!-- axios -->
+    <script src="../../cdn/axios.min.js"></script>
+    <script src="../../cdn/jquery.js"></script>
+    <title>音乐播放器</title>
+    <link rel="stylesheet" href="./use/player.css"/>
+    <link rel="stylesheet" href="./use/playermobile.css"/>
+</head>
+<body>
+  <div id="app">
+      <player></player>
+      <icon icon="el-icon-zoom-in"></icon>
+
+  </div>
+
+  <script src="./use/api.js"></script>
+  <script src="./use/player_index.js"></script>
+  <script src="../gpt/components/icon.js"></script>
+  <script type="text/javascript">
+    new Vue({el:"#app",
+
+    })
+  </script>
+</body>
+</html>

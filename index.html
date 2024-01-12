@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="./source/imgs/favicon.ico" type="image/x-icon">
+    <script src="./cdn/vue.js"></script>
+    <!-- ElementUI引入样式 -->
+    <link rel="stylesheet" href="./cdn/element-ui/element-index.css"/>
+    <script src="./cdn/element-ui/element-index.js"></script>
+    <!-- axios -->
+    <script src="./cdn/axios.min.js"></script>
+    <!-- 复制粘贴 -->
+    <script src="./cdn/vue-clipboard.js"></script>
+    <!-- 和风天气插件 -->
+    <script src="https://widget.qweather.net/standard/static/js/he-standard-common.js?v=2.0"></script>
+
+
+    <script type="text/javascript" src="./card_conf.js"></script>
+
+
+    <script>
+        // 和风天气
+        WIDGET = {
+            "CONFIG": {
+                "layout": "2",
+                "width": 230,
+                "height": 300,
+                "background": "2",  // 1.暗色、2.浅色
+                "dataColor": "000000",
+                "language": "zh",
+                "borderRadius": "5",
+                "key": "4d7a146bcc404a20bbe9d0eb51dbbf28" // 4034255d0cc94897b5f745367ccb81f2
+            }
+        }
+    </script>
+
+    <title>页面管理</title>
+    <style>
+        body {
+            margin: 0;
+        }
+        #app {
+            padding: 5px;
+        }
+        .card {
+            line-height: 2;
+            margin: 5px;
+            width: 270px;
+            height: 340px;
+        }
+        .card:hover {
+            box-shadow: 0 2px 4px rgba(14, 2, 2, 0.16), 0 0 6px rgba(0, 0, 0, 0.22)
+        }
+        .el-image {
+            width: 230px;
+            height: 280px;
+            border-radius: 5px;
+        }
+
+        .web-info {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-family: "PingFang SC",Arial,"Microsoft YaHei",sans-serif;
+            font-weight: 200;
+            font-size: 14px;
+            clear: both;
+            text-align: center;
+            background-color: #f5f5f5;
+
+
+        }
+        .web-info a {
+            cursor: pointer;
+            text-decoration: none;
+            color: #9c9b9b;
+        }
+
+        .web-info a:hover {
+            color: #666;
+        }
+
+    </style>
+</head>
+<body style="background: -webkit-gradient(linear, 70% 100%, 100% 100%,from(#f5fbfd), to(#edf2f8));">
+    <div style="
+        height: 80px;
+        width: 100%;
+        background-color: #fff;
+        display: flex;
+        align-items: center;
+    ">
+        <img style="width: 200px;" src="source/imgs/wenp_2.png"/>
+<!--        闻哥简单主页-->
+    </div>
+    <div id="app" style="min-height: calc(100vh - 50px);">
+        <div style="display: flex;flex-wrap: wrap;">
+            <div v-for="(card, index) in cards" >
+                <el-card v-if="card.show"  class="card">
+                    <div v-if="card.type === 'code'">
+
+                        <div :id="card.info"></div>
+                    </div>
+                    <div v-else-if="card.type === 'page'">
+                        <el-image :src="card.img || './source/imgs/card_img.png'" @click="toPage(card.info, card.noTarget)"></el-image>
+                        <div style="height: 20px;font-size: 12px; text-align: center">{{ card.title }}</div>
+
+                    </div>
+
+                </el-card>
+            </div>
+
+        </div>
+    </div>
+    <div class="web-info"  style="width: 100%; height: 50px; background-color: #fff;">
+
+        <a class="text-color" href="https://beian.miit.gov.cn" target="_blank">
+            <div style="display: flex;">
+                <img style="justify-content: center;width: 16px;margin-right: 3px;" src="source/imgs/gxb_favicon.png"/>
+                <span style="justify-content: center;height: 18px;">豫ICP备2023005798号</span>
+            </div>
+
+
+        </a>
+    </div>
+
+    <script type="text/javascript">
+        new Vue({el:"#app",
+
+            data: {
+                cards: cards,
+            },
+            methods:{
+
+                toPage(url, noTarget){
+                    if (noTarget){
+                        window.location.href = url
+                    } else {
+                        window.open(url)
+                    }
+                },
+            },
+        })
+    </script>
+
+</body>
+
+</html>
+<script>
+    export default {
+        components: {NImage}
+    }
+</script>

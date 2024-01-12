@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>历史事件</title>
+    <link rel="icon" href="../../source/imgs/favicon.ico">
+    <script src="../../cdn/vue.js"></script>
+    <!-- ElementUI引入样式 -->
+    <link rel="stylesheet" href="../../cdn/element-ui/element-index.css"/>
+    <!-- ElementUI引入组件库 -->
+    <script src="../../cdn/element-ui/element-index.js"></script>
+    <!-- axios -->
+    <script src="../../cdn/axios.min.js"></script>
+    <!-- 复制粘贴 -->
+    <script src="../../cdn/vue-clipboard.js"></script>
+</head>
+<body>
+    <div id="app">
+        {{treeData}}
+
+    </div>
+    <script type="text/javascript">
+        new Vue({ el: "#app",
+
+            computed:{},
+            data:{
+
+                treeData: [],
+                year: 2022,
+                month: 7,
+                day: 27,
+                page: 1,
+                size: 40,
+
+            },
+            created(){
+                this.loadData()
+            },
+            methods:{
+                async loadData(){
+                    let that = this
+                    let url = `https://www.lssjt.com/index.php?m=content&c=index&a=json_event&page=${that.page}&pagesize=${that.size}&month=${that.month}&day=${that.day}`
+                    axios.get(url).then(await function(res){
+                        const data = res.data
+                        if(data){
+                            that.treeData = data
+                        }
+                    })
+                }
+
+
+            }
+
+        })
+    </script>
+</body>
+</html>

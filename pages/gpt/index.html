@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- 核心库 -->
+    <script src="../../cdn/vue.js"></script>
+    <script src="../../cdn/axios.min.js"></script>
+    <script src="../../cdn/naive-ui/vue.global.js"></script>
+    <script src="../../cdn/naive-ui/index.js"></script>
+    <script src="../../cdn/markdown/markdown-it.min.js"></script>
+    <link rel="stylesheet" href="http://unpkg.com/@highlightjs/cdn-assets@11.7.0/styles/default.min.css">
+    <script src="http://unpkg.com/@highlightjs/cdn-assets@11.7.0/highlight.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../../cdn/iconify-icon/iconify-icon.min.js"></script>
+    <title>GPT工具</title>
+    <!-- 自定义 -->
+    <script src="util/api.js"></script>
+    <script src="util/local.js"></script>
+    <script src="./main.js"></script>
+
+
+
+</head>
+<body>
+<div id="app" style="height: 100vh;">
+    <!-- L1: 全局主题/语言 -->
+    <n-config-provider class="h-full" :theme="theme" :locale="locale">
+        <div class="h-full dark:bg-[#24272e] transition-all" :class="[isMobile ? 'p-0' : 'p-4']">
+            <div class="h-full overflow-hidden" :class="getMobileClass">
+                    <n-layout class="z-40 transition" :class="getContainerClass" has-sider>
+                        <!-- 左边 -->
+                        <n-layout-sider :style="getMobileClassSider" @update-collapsed="handleUpdateCollapsed" :show-trigger="isMobile ? false : 'arrow-circle'" :collapsed="collapsed" :collapsed-width="0" :width="260" collapse-mode="transform" position="absolute" bordered>
+                            <app-left :is-mobile="isMobile" :info="info"></app-left>
+                        </n-layout-sider>
+                        <template v-if="isMobile">
+                            <div v-show="!collapsed" class="fixed inset-0 z-40 bg-black/40" @click="handleUpdateCollapsed"></div>
+                        </template>
+                        <!-- 右边-->
+                        <n-layout-content class="h-full">
+                            <div class="flex flex-col w-full h-full">
+                                <app-head v-if="isMobile" :collapsed="collapsed" :title="chatList[selectIndex]?.title" :using-context="usingContext" @change-collapsed="handleUpdateCollapsed" @export="handleExport" @change-context="toggleUsingContext"></app-head>
+                                <!--主体-->
+                                <app-main :is-mobile="isMobile" :list="dataSources" :info="info" change-loading="val => loading = val"></app-main>
+                                <!-- 底部按钮 -->
+                                <app-footer :isMobile="isMobile" :info="info" :loading="loading" :using-context="usingContext" @export="handleExport" @change-context="toggleUsingContext" @clear="handleClear"></app-footer>
+                            </div>
+
+                        </n-layout-content>
+                    </n-layout>
+                </div>
+                <!-- 用户许可 -->
+                <!--        <Permission :visible="needPermission" />-->
+        </div>
+
+    </n-config-provider>
+
+
+</div>
+
+
+
+<!-- 基础组件 -->
+<script src="./components/IconButton.js"></script>
+<script src="./components/Message.js"></script>
+<script src="./components/UserAvatar.js"></script>
+<script src="./components/AppHead.js"></script>
+<script src="./components/AppMain.js"></script>
+<script src="./components/AppFooter.js"></script>
+<script src="./components/AppLeft.js"></script>
+
+
+<script type="text/javascript">
+    let app = Vue.createApp({
+        // el: "#app",
+        components:{
+            Message: new Message().body,
+            UserAvatar: new UserAvatar().type,
+            IconButton: new IconButton().type,
+            AppHead: new AppHead().main,
+            AppMain: new AppMain().main,
+            AppFooter: new AppFooter().main,
+            ChatList: new AppLeft().chatList,
+            PromptButton: new AppLeft().promptButton,
+            UserDiv: new AppLeft().userDiv,
+            AppLeft: new AppLeft().main
+
+
+
+        },
+        data() {
+            return {
+
+                // 使用上下文
+                usingContext: true,
+                info: main.getLanguage(),
+
+
+                loading: false, // 响应状态
+
+
+                // 数据
+                chatList:[],
+                dataSources: [
+                    {
+                        dateTime: '2022/03/03 15:16:20',
+                        text: '你说的很正确',
+                        inversion: true,
+                        error: false,
+                        loading: false,
+                    },
+                    {
+                        dateTime: '2022/03/03 15:16:20',
+                        text: '你说的很正确',
+                        inversion: false,
+                        error: false,
+                        loading: false,
+                    },
+
+                    {
+                        dateTime: '2022/03/03 15:16:20',
+                        text: '响应内容出现了错误',
+                        inversion: false,
+                        error: true,
+                        loading: false,
+                    },
+                    {
+                        dateTime: '2022/03/03 15:16:20',
+                        text:  `\n # 中国三国历史如下:
+                                \n   - 东汉末年, 外戚与宦官集团争夺权力, 边境战乱不断. 百姓民不聊生,最终爆发了黄巾起义...
+                                \n\`\`\`java\npublic static int add(int a, int b) {\n    return a + b;\n}\npublic static int add(int a, int b) {\n    return a + b;\n}\npublic static int add(int a, int b) {\n    return a + b;\n}\n\`\`\`
+                                \n   - 魏国皇帝曹芳将皇位禅让给晋武帝司马炎,司马炎改国号为晋,随后灭蜀吞吴,最终一统全国...
+                        `,
+                        inversion: false,
+                        error: false,
+                        loading: false,
+                    },
+                ],
+
+                collapsed: false,   // 关闭侧边
+                isMobile: false,
+            }
+
+        },
+        mounted () {
+            this.initMobile()
+        },
+        watch:{
+            // 设备变化
+           isMobile(){
+               this.collapsed = this.isMobile
+           }
+        },
+        computed: {
+
+            getContainerClass(){
+                return [
+                    'h-full',
+                    { 'pl-[260px]': !this.isMobile && !this.collapsed },
+                ]
+            },
+            getMobileClassSider () {
+                if (this.isMobile) {
+                    return {
+                        position: 'fixed',
+                        zIndex: 50,
+                    }
+                }
+                return {}
+            },
+            getMobileClass() {
+                if (this.isMobile)
+                    return ['rounded-none', 'shadow-none']
+                return ['border', 'rounded-md', 'shadow-md', 'dark:border-neutral-800']
+            },
+            // 许可
+            needPermission() {
+                // return !authStore.session?.auth && !authStore.token
+            }
+
+        },
+
+        methods: {
+            initMobile(){
+                this.isMobile =  document.body.clientWidth <= 650
+                window.onresize = () => {
+                    return (() => {
+                        this.isMobile =  document.body.clientWidth <= 650
+                    })()
+                }
+            },
+
+
+            // 清空会话
+            handleClear() {
+                this.dataSources = []
+                // alert('清空会话')
+            },
+            // 导出会话
+            handleExport() {
+                alert('下载会话')
+            },
+            // 切换会话上下文
+            toggleUsingContext() {
+                this.usingContext = !this.usingContext
+                // alert('切换模式')
+            },
+
+
+            handleUpdateCollapsed(){
+                this.collapsed = !this.collapsed
+            },
+
+        },
+
+
+    })
+
+    // 注册插件
+    app.use(naive)
+    app.mount('#app')
+
+
+</script>
+
+
+</body>
+</html>

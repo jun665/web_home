@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BUFF-CSGO市场</title>
+    <script src="../../cdn/vue.js"></script>
+    <!-- ElementUI引入样式 -->
+    <link rel="stylesheet" href="../../cdn/element-ui/element-index.css"/>
+    <!-- ElementUI引入组件库 -->
+    <script src="../../cdn/element-ui/element-index.js"></script>
+    <!-- axios -->
+    <script src="../../cdn/axios.min.js"></script>
+    <!-- 复制粘贴 -->
+    <script src="../../cdn/vue-clipboard.js"></script>
+    <style type="text/css">
+        body{
+           margin: 8px;
+
+        }
+        .list_body {
+            padding-top: 0.5px;
+            /*background-color: #1a181c;*/
+        }
+        .list_row {
+            height: 120px;
+            margin: 5px 2px 5px 2px;
+            padding: 5px;
+            border-radius: 3px;
+            /*box-shadow: 0 1px 2px 0 rgba(87, 86, 86, 0.54);*/
+            border: 1px solid #dbdbdb;
+            box-shadow: 0 0 4px 0 rgba(149,149,149,.3);
+            background-color: #FFFFFF;
+        }
+
+        .list_row:hover {
+            border: 0;
+            background-color: rgba(216, 102, 40, 0.01);
+            box-shadow: 0 0 3px 0 rgba(214, 145, 95, 0.53), 0 0 3px rgba(216, 102, 40, 0.87);
+
+        }
+        .list_row .item_icon {
+            height: 90px;
+        }
+        .list_row .item_icon_tag {
+            line-height: 15px;
+            padding: 0 2px;
+            position: absolute;
+            font-size: 9px;
+            color: #fff;
+            background: #397439;
+            border-radius: 2px;
+            z-index: 99999;
+        }
+        .list_row .item_icon_img {
+            height: 100%;
+            padding: 0px 30px 0 30px;
+            background-color: hsl(0, 0%, 90%);
+            transition: background-color 300ms;
+            border-radius: 2px;
+            box-shadow: 0 2px 0 0 rgba(216, 40, 119, 0.46);
+        }
+        .list_row .item_icon_title {
+            width: 300px;
+            height: 20px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: #757474;
+            font-size: 15px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <div class="config">
+        您的本金<el-input style="width: 100px" v-model="inputUserPrincipal" placeholder="请输入金额"  size="mini"></el-input>元。（可赚金额按最低购买金额计算，实际值要低很多）
+    </div>
+    <div class="list_body">
+        <el-row class="list_row" v-for="(item, index) in listData">
+            <!-- 左侧图片信息 -->
+            <el-col :span="8" style="height: 100%">
+
+                <div class="item_icon" >
+                    <span class="item_icon_tag" v-if="item.goods_info.info.tags.exterior">{{item.goods_info.info.tags.exterior.localized_name}}</span>
+                    <span class="item_icon_tag" v-if="item.goods_info.info.tags.exterior">{{item.goods_info.info.tags.exterior.localized_name}}</span>
+                    <el-image class="item_icon_img" :src="item.goods_info.icon_url" :fit="item.name"> </el-image>
+                </div>
+                <div class="item_icon_title">{{ item.name }}</div>
+            </el-col>
+
+
+            <el-col :span="8">
+                <div class="grid-content bg-purple">
+                    steam={{ item.goods_info.steam_price_cny }}元  |  buff价格{{ item.sell_min_price }}元  |  在售数量={{item.sell_num}}件
+                </div>
+            </el-col>
+            <el-col :span="8">
+                <div class="grid-content bg-purple"></div>
+                steam提升={{computeSteamRevalue(item).toFixed(2)}}元（{{computeSteamRevalueRatio(item)}}%）  | 可买{{ maximumBuy(item) }}件、可赚{{maximumProfit(item).toFixed(2)}}元（不考虑手续费）
+                <svg @click="openSteamMarket(item.steam_market_url)" t="1728075951550" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1482" width="32" height="32"><path d="M510.872 0.00004A511.738935 511.738935 0 0 0 0.578065 470.68598l274.473965 113.377986a144.332982 144.332982 0 0 1 89.621989-24.903997L486.810003 382.552991v-2.615999a193.084975 193.084975 0 1 1 193.049976 193.095975h-4.48L501.388001 697.214951c0 2.275 0.193 4.549999 0.193 6.823a144.799982 144.799982 0 0 1-286.766963 28.543996L18.227063 651.159957A511.965935 511.965935 0 1 0 510.792 0.00004h0.069zM321.404024 776.591941L258.540032 750.549945a108.772986 108.772986 0 1 0 59.599993-148.745981l64.967991 26.837996a80.09299 80.09299 0 1 1-61.646992 147.835981v0.114z m487.139938-396.767949A128.661984 128.661984 0 1 0 679.882979 508.439975a128.843984 128.843984 0 0 0 128.662983-128.616983z m-225.061971-0.228a96.661988 96.661988 0 1 1 96.661988 96.661988 96.433988 96.433988 0 0 1-96.661988-96.661988z" fill="#13227a" p-id="1483"></path></svg>
+            </el-col>
+<!--            {{item}}-->
+
+        </el-row>
+    </div>
+</div>
+
+<script type="text/javascript">
+    new Vue({
+        el: "#app",
+        data: {
+            // 用户本金
+            inputUserPrincipal: 1000,
+            listData: []
+        },
+        created() {
+            this.loadData()
+
+
+
+            // this.load2();
+
+        },
+        methods: {
+
+            // 加载表格数据
+            async loadData() {
+                let that = this
+                //  https://buff.163.com/api/market/goods?game=csgo&page_num=1&tab=sellin&use_suggestion=0&_=1728069501347
+                axios.get("https://buff.163.com/api/market/goods", {
+                    headers: {
+                        // "cookie": "Device-Id=ZVDI69Re3qQp1kIJ6I5Y; client_id=4bPT7TNcqRbtNFOg4xMI_Q; Locale-Supported=zh-Hans; game=csgo; csrf_token=ImFmM2JhMjg1NTI3MzMzYTAzYmUwNGRmZTFhMzIwZGNhMGJlYmE1OTEi.GeG0Cg.k_jGUKQ5nWJZZS0BvKtm-CkmlFs"
+                    },
+                    params: {
+                        game: 'csgo',
+                        page_num: 1,
+                        tab: 'sellin',
+                        use_suggestion: 0,
+                        _: '1728069501347',
+
+                        // page_size: 20,
+                        // search: 'ak',
+                        // fold: true,
+                        // quality: '',
+                        // rarity: ''
+                    }
+                }).then(await function (res) {
+                    if (res.data && res.data["code"] === "OK") {
+                        const itemData = res.data["data"]
+                        if (itemData) {
+                            that.listData = itemData.items
+                        }
+                    }
+                })
+            },
+
+            // 打开steam市场
+            openSteamMarket(steam_market_url){
+                window.open(steam_market_url);
+            },
+
+            // 计算升值（元）
+            computeSteamRevalue(item){
+                const buffVal = item.sell_min_price
+                const steamVal = item.goods_info.steam_price_cny;
+                return (steamVal - buffVal);
+            },
+            // 计算升值（%）
+            computeSteamRevalueRatio(item){
+                const buffVal = item.sell_min_price
+                const steamVal = item.goods_info.steam_price_cny;
+                return ((steamVal - buffVal) / buffVal * 100).toFixed(2)
+            },
+
+
+
+
+            // 最大可买件数
+            maximumBuy(item) {
+                // 库存数量
+                const sellCount = item.sell_num;
+                // 买入单价
+                const buffVal = item.sell_min_price
+                console.log(this.inputUserPrincipal / buffVal)
+                // 可买数量
+                const maxCount = Math.floor(this.inputUserPrincipal / buffVal)
+
+                if (maxCount <= sellCount) {
+                    return maxCount;
+                }
+                return sellCount;
+            },
+            // 最大可买件数利润
+            maximumProfit(item) {
+                const profitItem = this.computeSteamRevalue(item)
+                const maximumBuy = this.maximumBuy(item)
+                return profitItem * maximumBuy
+            }
+        }
+    })
+</script>
+</body>
+</html>

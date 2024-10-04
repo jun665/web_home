@@ -6,7 +6,7 @@ const clazzCard = [
         "children": [
             {
                 "title": "和风天气",
-                "show": true,
+                "show": false,
                 "type": "code",
                 "info": "he-plugin-standard",
                 "desc": "简易的天气插件，可以以卡片嵌入到网页中。"
@@ -16,7 +16,7 @@ const clazzCard = [
                 "show": true,
                 "type": "page",
                 "info": "https://simulator.io/board",
-                "img": "components/img.png",
+                "img": "components/card_image/img.png",
                 "desc": "电路仿真在线绘图网站，可以很方便地画自己的逻辑电路并调试。"
             },
             {
@@ -24,7 +24,7 @@ const clazzCard = [
                 "show": true,
                 "type": "page",
                 "info": "./pages/picks_soccer/index.html",
-                "img": "components/img_1.png",
+                "img": "components/card_image/img_1.png",
                 "desc": "用于足球胜负平的随机投注，可以显示最新的比赛信息，解决投注选择困难。"
             },
             {
@@ -34,6 +34,14 @@ const clazzCard = [
                 "info": "http://gpt.wenp.top/",
                 "img": "",
                 "desc": ""
+            },
+            {
+                "title": "BUFF市场",
+                "show": true,
+                "type": "page",
+                "info": "./pages/csgo_buff/index.html",
+                "img": "components/card_image/csgo_buff.png",
+                "desc": "查看buff上csgo饰品信息，比较与steam的价格比例。"
             },
         ]
     },

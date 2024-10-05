@@ -41,13 +41,13 @@
         .list_row .item_icon {
             height: 90px;
         }
+
         .list_row .item_icon_tag {
             line-height: 15px;
             padding: 0 2px;
             position: absolute;
             font-size: 9px;
             color: #fff;
-            background: #397439;
             border-radius: 2px;
             z-index: 99999;
         }
@@ -58,17 +58,31 @@
             transition: background-color 300ms;
             border-radius: 2px;
             box-shadow: 0 2px 0 0 rgba(216, 40, 119, 0.46);
+            float: left;
         }
+
+        .list_row .item_icon .item_icon_price {
+            height: calc(100% + 3px);
+            width: 150px;
+            float: left;
+            background-color: #1ed36f;
+        }
+
+
         .list_row .item_icon_title {
-            width: 300px;
+            min-width: 300px;
             height: 20px;
+            padding: 2px 1px 1px 1px;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
             color: #757474;
-            font-size: 15px;
+            font-size: 13px;
             text-align: left;
         }
+
+
+
     </style>
 </head>
 <body>
@@ -77,28 +91,32 @@
         您的本金<el-input style="width: 100px" v-model="inputUserPrincipal" placeholder="请输入金额"  size="mini"></el-input>元。（可赚金额按最低购买金额计算，实际值要低很多）
     </div>
     <div class="list_body">
-        <el-row class="list_row" v-for="(item, index) in listData">
+        <el-row class="list_row" v-for="(item, index) in listData" :key="index">
             <!-- 左侧图片信息 -->
             <el-col :span="8" style="height: 100%">
-
+                <!-- 图片 -->
                 <div class="item_icon" >
-                    <span class="item_icon_tag" v-if="item.goods_info.info.tags.exterior">{{item.goods_info.info.tags.exterior.localized_name}}</span>
-                    <span class="item_icon_tag" v-if="item.goods_info.info.tags.exterior">{{item.goods_info.info.tags.exterior.localized_name}}</span>
-                    <el-image class="item_icon_img" :src="item.goods_info.icon_url" :fit="item.name"> </el-image>
+                    <span class="item_icon_tag" v-if="item.tag_exists" :style="`background: ${item.tag_bg};`">{{item.tag_name}}</span>
+                    <el-image class="item_icon_img" :src="item.icon_url" :fit="item.name"></el-image>
+                    <div class="item_icon_price">
+                        <span>BF售价：{{ item.price_steam }}元</span> <br>
+                        <span>ST售价：{{ item.price_buff }}元</span> <br>
+                        <span>{{ item.sell_num }}件在售</span> <br>
+                    </div>
                 </div>
+
                 <div class="item_icon_title">{{ item.name }}</div>
             </el-col>
 
 
             <el-col :span="8">
                 <div class="grid-content bg-purple">
-                    steam={{ item.goods_info.steam_price_cny }}元  |  buff价格{{ item.sell_min_price }}元  |  在售数量={{item.sell_num}}件
+
                 </div>
             </el-col>
             <el-col :span="8">
-                <div class="grid-content bg-purple"></div>
-                steam提升={{computeSteamRevalue(item).toFixed(2)}}元（{{computeSteamRevalueRatio(item)}}%）  | 可买{{ maximumBuy(item) }}件、可赚{{maximumProfit(item).toFixed(2)}}元（不考虑手续费）
-                <svg @click="openSteamMarket(item.steam_market_url)" t="1728075951550" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1482" width="32" height="32"><path d="M510.872 0.00004A511.738935 511.738935 0 0 0 0.578065 470.68598l274.473965 113.377986a144.332982 144.332982 0 0 1 89.621989-24.903997L486.810003 382.552991v-2.615999a193.084975 193.084975 0 1 1 193.049976 193.095975h-4.48L501.388001 697.214951c0 2.275 0.193 4.549999 0.193 6.823a144.799982 144.799982 0 0 1-286.766963 28.543996L18.227063 651.159957A511.965935 511.965935 0 1 0 510.792 0.00004h0.069zM321.404024 776.591941L258.540032 750.549945a108.772986 108.772986 0 1 0 59.599993-148.745981l64.967991 26.837996a80.09299 80.09299 0 1 1-61.646992 147.835981v0.114z m487.139938-396.767949A128.661984 128.661984 0 1 0 679.882979 508.439975a128.843984 128.843984 0 0 0 128.662983-128.616983z m-225.061971-0.228a96.661988 96.661988 0 1 1 96.661988 96.661988 96.433988 96.433988 0 0 1-96.661988-96.661988z" fill="#13227a" p-id="1483"></path></svg>
+                steam提升={{item.S_ADD_V}}元（{{item.S_ADD_R}}%）{{item.S_ADD_S}}  | 可买{{ item.maximumBuy }}件、可赚{{item.maximumProfit}}元（不考虑手续费）
+                <svg @click="openURL(item.steam_market_url)" t="1728075951550" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1482" width="32" height="32"><path d="M510.872 0.00004A511.738935 511.738935 0 0 0 0.578065 470.68598l274.473965 113.377986a144.332982 144.332982 0 0 1 89.621989-24.903997L486.810003 382.552991v-2.615999a193.084975 193.084975 0 1 1 193.049976 193.095975h-4.48L501.388001 697.214951c0 2.275 0.193 4.549999 0.193 6.823a144.799982 144.799982 0 0 1-286.766963 28.543996L18.227063 651.159957A511.965935 511.965935 0 1 0 510.792 0.00004h0.069zM321.404024 776.591941L258.540032 750.549945a108.772986 108.772986 0 1 0 59.599993-148.745981l64.967991 26.837996a80.09299 80.09299 0 1 1-61.646992 147.835981v0.114z m487.139938-396.767949A128.661984 128.661984 0 1 0 679.882979 508.439975a128.843984 128.843984 0 0 0 128.662983-128.616983z m-225.061971-0.228a96.661988 96.661988 0 1 1 96.661988 96.661988 96.433988 96.433988 0 0 1-96.661988-96.661988z" fill="#13227a" p-id="1483"></path></svg>
             </el-col>
 <!--            {{item}}-->
 
@@ -110,9 +128,41 @@
     new Vue({
         el: "#app",
         data: {
+            cookieStr: 'Device-Id=X7KopiOtSmdbQKTD3hVo; Locale-Supported=zh-Hans; game=csgo; remember_me=U1077048501|MrZh1Lwm8UxTpSC4urIm5lBI8RGeHuGt; session=1-8eaxlItIsbQnFJ6H31E_FPuvSTSvTRdrcS69qfO6R5Rq2029841389; inventory_fold_result_switch=on; csrf_token=ImQwMTY4N2M0N2U3ZjExYTc4YmI4MzFmMGM5OTNiZTQwM2MxZmRmOTci.GeKPTQ.i4Ds0zN3cDqtn3naxlNaWA3CFJs',
+
             // 用户本金
             inputUserPrincipal: 1000,
-            listData: []
+            listData: [],
+            enumMap: {
+                // 磨损枚举
+                exterior: {
+                    wearcategory: {
+                        localized_name: '无',
+                        tag_color: 'rgba(255,255,255,0)'
+                    },
+                    wearcategory0: {
+                        localized_name: '崭新出厂',
+                        tag_color: '#397439'
+                    },
+                    wearcategory1: {
+                        localized_name: '略有磨损',
+                        tag_color: '#488B48'
+                    },
+                    wearcategory2: {
+                        localized_name: '久经沙场',
+                        tag_color: '#F1AD4D'
+                    },
+                    wearcategory3: {
+                        localized_name: '残破不堪',
+                        tag_color: '#B7625F'
+                    },
+                    wearcategory4: {
+                        localized_name: '战痕累累',
+                        tag_color: '#993A38'
+                    },
+                }
+            }
+
         },
         created() {
             this.loadData()
@@ -124,14 +174,57 @@
         },
         methods: {
 
+            handlerListData(items) {
+                const newList = []
+                items.forEach(item => {
+                    const newItem = {}
+
+                    // 饰品价格
+                    const steamPrice = item.goods_info.steam_price_cny
+                    const buffPrice = item.sell_min_price
+                    const difference = steamPrice - buffPrice
+                    newItem['price_steam'] = steamPrice                                        // steam价格
+                    newItem['price_buff'] = buffPrice                                          // buff价格
+                    newItem['price_difference'] = difference                                   // 差价（完整值）
+                    newItem['S_ADD_V'] = difference.toFixed(2)                                 // 差价（保留2位小数）
+                    newItem['S_ADD_R'] = (difference / buffPrice * 100).toFixed(2)             // 差价（%）
+                    newItem['S_ADD_S'] = difference < 0 ? -1 : difference === 0 ? 0 : 1        // 升降状态
+
+                    // 磨损程度
+                    const exterior = item.goods_info.info.tags.exterior
+                    newItem['tag_exists'] = true
+                    if (exterior) {
+                        const exteriorName = exterior.internal_name
+                        newItem['tag_bg'] = this.enumMap.exterior[exteriorName].tag_color
+                        newItem['tag_name'] = this.enumMap.exterior[exteriorName].localized_name
+                    }
+
+                    // 其它
+                    const sellCount = item.sell_num
+                    newItem['sell_num'] = sellCount                                          // 在售数量
+                    newItem['name'] = item.name                                              // 饰品名称
+                    newItem['steam_market_url'] = item.steam_market_url                      // steam市场地址
+                    newItem['icon_url'] = item.goods_info.icon_url                           // 饰品图片
+
+                    // 买入属性
+                    const maxCount = Math.floor(this.inputUserPrincipal / buffPrice)         // 理论最大可买数量
+                    const maximumBuy = maxCount <= sellCount ? maxCount : sellCount          // 实际最大可买数量
+                    newItem['maximumBuy'] = maximumBuy
+                    newItem['maximumProfit'] = (maximumBuy * difference).toFixed(2)          // 当前利润(不考虑手续费)
+
+                    newList.push(newItem)
+                })
+                return newList;
+            },
+
+
             // 加载表格数据
             async loadData() {
+                // document.cookie = this.cookieStr; // 修改本地cookie
                 let that = this
-                //  https://buff.163.com/api/market/goods?game=csgo&page_num=1&tab=sellin&use_suggestion=0&_=1728069501347
+
                 axios.get("https://buff.163.com/api/market/goods", {
-                    headers: {
-                        // "cookie": "Device-Id=ZVDI69Re3qQp1kIJ6I5Y; client_id=4bPT7TNcqRbtNFOg4xMI_Q; Locale-Supported=zh-Hans; game=csgo; csrf_token=ImFmM2JhMjg1NTI3MzMzYTAzYmUwNGRmZTFhMzIwZGNhMGJlYmE1OTEi.GeG0Cg.k_jGUKQ5nWJZZS0BvKtm-CkmlFs"
-                    },
+                    // headers: { "cookie": that.cookieStr },
                     params: {
                         game: 'csgo',
                         page_num: 1,
@@ -139,9 +232,9 @@
                         use_suggestion: 0,
                         _: '1728069501347',
 
-                        // page_size: 20,
+                        page_size: 100,
                         // search: 'ak',
-                        // fold: true,
+                        fold: true,
                         // quality: '',
                         // rarity: ''
                     }
@@ -149,54 +242,21 @@
                     if (res.data && res.data["code"] === "OK") {
                         const itemData = res.data["data"]
                         if (itemData) {
-                            that.listData = itemData.items
+                            const dataList = itemData.items
+                            that.listData = that.handlerListData(dataList)
                         }
                     }
                 })
             },
 
+
             // 打开steam市场
-            openSteamMarket(steam_market_url){
+            openURL(steam_market_url){
                 window.open(steam_market_url);
             },
 
-            // 计算升值（元）
-            computeSteamRevalue(item){
-                const buffVal = item.sell_min_price
-                const steamVal = item.goods_info.steam_price_cny;
-                return (steamVal - buffVal);
-            },
-            // 计算升值（%）
-            computeSteamRevalueRatio(item){
-                const buffVal = item.sell_min_price
-                const steamVal = item.goods_info.steam_price_cny;
-                return ((steamVal - buffVal) / buffVal * 100).toFixed(2)
-            },
 
 
-
-
-            // 最大可买件数
-            maximumBuy(item) {
-                // 库存数量
-                const sellCount = item.sell_num;
-                // 买入单价
-                const buffVal = item.sell_min_price
-                console.log(this.inputUserPrincipal / buffVal)
-                // 可买数量
-                const maxCount = Math.floor(this.inputUserPrincipal / buffVal)
-
-                if (maxCount <= sellCount) {
-                    return maxCount;
-                }
-                return sellCount;
-            },
-            // 最大可买件数利润
-            maximumProfit(item) {
-                const profitItem = this.computeSteamRevalue(item)
-                const maximumBuy = this.maximumBuy(item)
-                return profitItem * maximumBuy
-            }
         }
     })
 </script>

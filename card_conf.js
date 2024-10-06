@@ -5,6 +5,14 @@ const clazzCard = [
         "show": true,
         "children": [
             {
+                "title": "BUFF市场",
+                "show": true,
+                "type": "page",
+                "info": "./pages/csgo_buff/index.html",
+                "img": "components/card_image/csgo_buff.png",
+                "desc": "查看buff上csgo饰品信息，比较与steam的价格比例。"
+            },
+            {
                 "title": "和风天气",
                 "show": false,
                 "type": "code",
@@ -21,11 +29,11 @@ const clazzCard = [
             },
             {
                 "title": "足球胜平负",
-                "show": true,
+                "show": false,
                 "type": "page",
                 "info": "./pages/picks_soccer/index.html",
                 "img": "components/card_image/img_1.png",
-                "desc": "用于足球胜负平的随机投注，可以显示最新的比赛信息，解决投注选择困难。"
+                "desc": "用于足球胜负平的随机投注，可以显示最新的比赛信息，解决投注选择困难。(目标网站似乎已停止使用此接口)"
             },
             {
                 "title": "Chat GPT",
@@ -34,14 +42,6 @@ const clazzCard = [
                 "info": "http://gpt.wenp.top/",
                 "img": "",
                 "desc": ""
-            },
-            {
-                "title": "BUFF市场",
-                "show": true,
-                "type": "page",
-                "info": "./pages/csgo_buff/index.html",
-                "img": "components/card_image/csgo_buff.png",
-                "desc": "查看buff上csgo饰品信息，比较与steam的价格比例。"
             },
         ]
     },
@@ -105,7 +105,7 @@ const clazzCard = [
         "children": [
             {
                 "title": "gpt重构",
-                "show": true,
+                "show": false,
                 "type": "page",
                 "info": "./pages/gpt/index.html",
                 "img": "pages/gpt/img.png",
@@ -136,11 +136,15 @@ function allCard(){
 
 // 分类：含全部
 function allAndClassCard() {
-    const list = [{
-        "className": "其他",
+    const all = {
+        "className": "全部",
         "show": true,
         "children": allCard()
-    }]
+    }
+
+
+    const list = []
     list.push(...clazzCard)
+    list.push(all)
     return list
 }

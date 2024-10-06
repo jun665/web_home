@@ -248,9 +248,11 @@
                                     <path fill="#1245b6" p-id="1483" d="M510.872 0.00004A511.738935 511.738935 0 0 0 0.578065 470.68598l274.473965 113.377986a144.332982 144.332982 0 0 1 89.621989-24.903997L486.810003 382.552991v-2.615999a193.084975 193.084975 0 1 1 193.049976 193.095975h-4.48L501.388001 697.214951c0 2.275 0.193 4.549999 0.193 6.823a144.799982 144.799982 0 0 1-286.766963 28.543996L18.227063 651.159957A511.965935 511.965935 0 1 0 510.792 0.00004h0.069zM321.404024 776.591941L258.540032 750.549945a108.772986 108.772986 0 1 0 59.599993-148.745981l64.967991 26.837996a80.09299 80.09299 0 1 1-61.646992 147.835981v0.114z m487.139938-396.767949A128.661984 128.661984 0 1 0 679.882979 508.439975a128.843984 128.843984 0 0 0 128.662983-128.616983z m-225.061971-0.228a96.661988 96.661988 0 1 1 96.661988 96.661988 96.433988 96.433988 0 0 1-96.661988-96.661988z" ></path>
                                 </svg>
                             </div>
-                            <div class="item_icon_price_item_val"> {{ item.price_steam }}元 </div>
+                            <div class="item_icon_price_item_val"> {{ item.price_steam }}元</div>
+                            <span :style="`color: ${item.price_difference < 0 ? '#ee5555' : '#1DBF62'};`" style="font-size: 12px;float: left">（{{ (item.S_ADD_V > 0 ? '+' : '') + item.S_ADD_V }}元）</span>
                             <!-- 涨跌% -->
                             <div v-if="item.price_difference !== 0">
+
                                 <div class="item_icon_price_item_change_svg" >
                                     <svg v-if="item.price_difference > 0" width="16" height="16" t="1728210231346" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="54580" >
                                         <path fill="#84f98b" opacity="0.5" p-id="54581"d="M512.0256 0L170.6752 358.4h682.6496L512.0256 0z" ></path>
@@ -289,6 +291,7 @@
                 <span class="i_name">净利润</span>：<span class="i_value" :style="`color: ${item.buff_buy_steam_sell_value < 0 ? '#ee5555' : '#1DBF62'};`">{{item.buff_buy_steam_sell_value.toFixed(2)}}元</span><br>
                 <span class="i_name">净利率</span>：<span class="i_value" :style="`color: ${item.buff_buy_steam_sell_rate < 0 ? '#ee5555' : '#1DBF62'};`">{{item.buff_buy_steam_sell_rate.toFixed(2)}}%</span><br>
                 <span class="i_name">环亏损</span>：<span class="i_value" style="color: #9c9b9b;">{{item.buff_buy_steam_sell_rate2.toFixed(2)}}%</span><br>
+                <span class="i_name">抽成额</span>：<span class="i_value" style="color: #ae7a7a;">B≈{{item.buff_buy_steam_sell_buff_rake}}元、S≈{{item.buff_buy_steam_sell_steam_rake.toFixed(2)}}元</span><br>
 
             </div>
             <div class="left_i">
@@ -296,7 +299,7 @@
                 <span class="i_name">净利润</span>：<span class="i_value" :style="`color: ${item.steam_buy_buff_sell_value < 0 ? '#ee5555' : '#1DBF62'};`">{{item.steam_buy_buff_sell_value.toFixed(2)}}元</span><br>
                 <span class="i_name">净利率</span>：<span class="i_value" :style="`color: ${item.steam_buy_buff_sell_rate < 0 ? '#ee5555' : '#1DBF62'};`">{{item.steam_buy_buff_sell_rate.toFixed(2)}}%</span><br>
                 <span class="i_name">环亏损</span>：<span class="i_value" style="color: #9c9b9b;">{{item.steam_buy_buff_sell_rate2.toFixed(2)}}%</span><br>
-
+                <span class="i_name">抽成额</span>：<span class="i_value" style="color: #ae7a7a;">B≈{{item.steam_buy_buff_sell_buff_rake.toFixed(2)}}元、S≈{{item.steam_buy_buff_sell_steam_rake.toFixed(2)}}元</span><br>
             </div>
         </el-row>
     </div>
@@ -1060,21 +1063,24 @@
                     const steam_sell_price = steamPrice * (1 - this.premium.steam_sell)
                     newItem['buff_buy_price'] = buff_buy_price
                     newItem['buff_sell_price'] = buff_sell_price
-                    newItem['buff_sell_price2'] = buff_sell_price2
+                    newItem['buff_sell_price2'] = buff_sell_price2                                        // 计算提现
                     newItem['steam_buy_price'] = steam_buy_price
                     newItem['steam_sell_price'] = steam_sell_price
 
                     // 倒卖差额
                     // buff买、steam卖
-                    const steam_add_value = steam_sell_price - buff_buy_price                // 最终利润（steam利润不可提现）
+                    const steam_add_value = steam_sell_price - buff_buy_price                             // 最终利润（steam利润不可提现）
                     newItem['buff_buy_steam_sell_value'] = steam_add_value
                     newItem['buff_buy_steam_sell_rate'] = steam_add_value / buff_buy_price * 100
-
+                    newItem['buff_buy_steam_sell_buff_rake'] = buff_buy_price - buffPrice                 // buff抽成
+                    newItem['buff_buy_steam_sell_steam_rake'] = steamPrice -  steam_sell_price            // steam抽成
 
                     // steam买、buff卖
                     const buff_add_value = buff_sell_price - steam_buy_price
                     newItem['steam_buy_buff_sell_value'] = buff_add_value
                     newItem['steam_buy_buff_sell_rate'] = buff_add_value / steam_buy_price * 100
+                    newItem['steam_buy_buff_sell_steam_rake'] = steam_buy_price - steamPrice               // buff抽成
+                    newItem['steam_buy_buff_sell_buff_rake'] = buffPrice -  buff_sell_price              // steam抽成（不考虑提现）
 
                     // 回转收益
                     newItem['buff_buy_steam_sell_rate2'] = (steam_add_value + buff_add_value) / buff_buy_price * 100

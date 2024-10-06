@@ -956,9 +956,9 @@
                         img_src: item.img_src,                                        // 图片
                         background_image_url: item.background_image_url,              // 背景图片
                         paintwear: item.asset_info.paintwear,                         // 磨损
-                        price: item.price,                                            // 价格
-                        lowest_bargain_price: item.lowest_bargain_price,              // 最低特价
-                        rarity_color: useItem.rarity_color                            // yanse
+                        price: item.price + '元',                                     // 价格
+                        lowest_bargain_price: item.lowest_bargain_price + '元',       // 最低特价
+                        rarity_color: useItem.rarity_color                            // 颜色
                     })
                 })
                 return newList

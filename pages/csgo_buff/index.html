@@ -23,10 +23,11 @@
             margin: -152px 2px 5px 2px;
             height: 140px;
             width: calc(100% - 31px);
+            min-width: 1500px;
             position: fixed;
             padding: 5px;
             background-color: rgba(27, 27, 25);
-            /*background: -webkit-gradient(linear, 8% 3%, 90% 20%,from(#242227), to(#585559));*/
+            background: -webkit-gradient(linear, 38% 3%, 90% 20%,from(#242227), to(#585559));
             border: 1px solid rgba(219, 219, 219, 0.5);
             z-index: 100;
             border-radius: 3px;
@@ -42,11 +43,12 @@
         .list_body {
             position: fixed;
             overflow: scroll;
-            height: calc(100vh - 140px);
-            width: calc(100% - 18px) ;
+            height: calc(100vh - 180px);
+            width: calc(100% - 18px);
+            min-width: 1500px;
             overflow-x: hidden;
-            /*padding-right: 5px;*/
             background-color: #1a181c;
+            padding-bottom: 20px;
         }
         /* 去除内边距、边框，可用行高height - 12px */
         .list_row{
@@ -60,15 +62,15 @@
         }
         .list_row:hover {
             border: 0;
-            background: -webkit-gradient(linear, 8% 3%, 90% 20%,from(#242227), to(#585559));
+            background: -webkit-gradient(linear, 8% 3%, 90% 20%,from(#19151e), to(#2e2218));
             box-shadow: 0 0 3px 0 rgba(214, 145, 95, 0.53), 0 0 3px rgba(216, 102, 40, 0.87);
         }
 
-
         .left_0 {
             height: 100%;
-            min-width: 350px;
-            max-width: 350px;
+            min-width: 500px;
+            max-width: 500px;
+            float: left;
         }
         .left_0 .item_icon {
             height: 90px;
@@ -77,7 +79,7 @@
             line-height: 15px;
             padding: 0 2px;
             position: absolute;
-            font-size: 9px;
+            font-size: 10px;
             color: #fff;
             border-radius: 2px;
             z-index: 99;
@@ -94,7 +96,7 @@
         }
         .left_0 .item_icon .item_icon_price {
             height: calc(100% + 3px);
-            width: 190px;
+            width: 350px;
             float: left;
         }
         .left_0 .item_icon .item_icon_price .tags {
@@ -111,7 +113,7 @@
 
         }
         .left_0 .item_icon .item_icon_price .item_icon_price_item {
-            min-width: 120px;
+            min-width: 100%;
             margin: 0 5px 0 5px;
         }
         .left_0 .item_icon .item_icon_price .item_icon_price_item .item_icon_price_item_svg {
@@ -136,7 +138,7 @@
             /*padding-top: 2px;*/
         }
         .left_0 .item_icon .item_icon_price .item_icon_price_count {
-            margin: 10px 0 2px 7px;
+            margin: 3px 0 2px 7px;
             color: #959595;
             font-size: 12px;
         }
@@ -150,16 +152,60 @@
             color: #757474;
             font-size: 13px;
             text-align: left;
+            float: left;
+        }
+
+        .left_i {
+            height: 100%;
+            min-width: 200px;
+            max-width: 200px;
+            float: left;
+            color: rgb(149, 149, 149);
+        }
+        .left_i .i_title {
+            color: #3a8ee6;
+            font-size: 14px;
+            margin-bottom: 3px;
+        }
+        .left_i .i_name {
+            color: rgb(150, 150, 150);
+            font-size: 12px;
+        }
+        .left_i .i_value {
+            color: #eea20e;
+            font-size: 12px;
         }
 
 
+        .el-dialog  {
+            border: 1px solid #959595;
+            border-radius: 2px;
+        }
+        .el-dialog .el-dialog__title {
+            color: #FFFFFF;
+        }
+        .el-dialog .el-dialog__header, .el-dialog .el-dialog__body {
+            background-color: #1a181c;
+        }
+
+
+        .el_table tr, .el-table__body-wrapper > table > tbody > tr > td {
+            background-color: #1a181c !important;
+            color: #969696FF;
+
+        }
+        .el-table th, .el-table__body-wrapper > table > tbody > tr > td {
+            border-bottom-color: #9c9b9b !important;
+        }
+        .el-table--border::after, .el-table--group::after, .el-table::before {
+            background-color: #9c9b9b !important;
+        }
 
     </style>
 </head>
 <body>
 <div id="app">
     <div class="config">
-
         <div style="font-size: 12px;">
             因为跨域问题限制，若您想访问本页，请使用windows命令关闭安全策略来启动您的浏览器：(后续可能会进行修正)
             <ul style="font-size: 12px; color: #e61d5f; margin: 2px" >
@@ -170,18 +216,17 @@
             ---------------------------------------------------------------------------------------------------------------------------------------------------------------
             某些功能可能需要您登录BUFF平台：<a style="color: #3a8ee6;" href="https://buff.163.com/" target="_blank">BUFF登录</a>
         </div>
-
-
-<!--        您的本金<el-input style="width: 100px" v-model="inputUserPrincipal" placeholder="请输入金额"  size="mini"></el-input>元。（可赚金额按最低购买金额计算，实际值要低很多） <br>-->
-
         <div style="font-size: 12px;">共发现<span style="color: #eea20e">{{ " " + listDataInfo.total + " " }}</span>种饰品！</div>
+        <div style="font-size: 12px;">steam出售手续费15%、购买手续费5%.</div>
+        <div style="font-size: 12px;">buff交易手续费2.5%、提现手续费1%.</div>
+        <div style="font-size: 12px; color: #cf9236">环亏损是指经过A->B->A过程后因A、B平台抽成导致的总亏损百分比.</div>
     </div>
     <div class="list_body">
         <el-row class="list_row" v-for="(item, index) in listData" :key="index">
             <div class="left_0">
                 <div class="item_icon" >
                     <span class="item_icon_tag" v-if="item.tag_exists" :style="`background: ${item.tag_bg};`">{{item.tag_name}}</span>
-                    <el-image class="item_icon_img" :style="`box-shadow: 0 2px 0 0 ${item.rarity_color};`" :src="item.icon_url" :fit="item.name"></el-image>
+                    <el-image @click="openSell(item)" class="item_icon_img" :style="`box-shadow: 0 2px 0 0 ${item.rarity_color};`" :src="item.icon_url" :fit="item.name"></el-image>
                     <div class="item_icon_price">
                         <!-- 标签列表 -->
                         <div class="tags" >
@@ -225,41 +270,64 @@
                 </div>
                 <span class="item_name">{{ item.name }} </span>
             </div>
+            <div class="left_i">
+                <div class="i_title">BUFF交易市场</div>
+                <span class="i_name">买入</span>：<span class="i_value">{{item.buff_buy_price.toFixed(2)}}元</span><br>
+                <span class="i_name">卖出</span>：<span class="i_value">{{item.buff_sell_price.toFixed(2)}}元</span><br>
+                <span class="i_name">提现</span>：<span class="i_value">{{item.buff_sell_price2.toFixed(2)}}元</span><br>
 
-            <!-- 图片 -->
-           <!-- <div class="item_icon" >
-                <span class="item_icon_tag" v-if="item.tag_exists" :style="`background: ${item.tag_bg};`">{{item.tag_name}}</span>
-                <el-image class="item_icon_img" :src="item.icon_url" :fit="item.name"></el-image>
-                <div class="item_icon_price">
-                    <span>BF售价：{{ item.price_steam }}元</span> <br>
-                    <span>ST售价：{{ item.price_buff }}元</span> <br>
-                    <span>{{ item.sell_num }}件在售</span> <br>
-                </div>
             </div>
-            <div class="item_icon_title">{{ item.name }}</div>-->
+            <div class="left_i">
+                <div class="i_title">STEAM交易市场</div>
+                <span class="i_name">买入</span>：<span class="i_value">{{item.steam_buy_price.toFixed(2)}}元</span><br>
+                <span class="i_name">卖出</span>：<span class="i_value">{{item.steam_sell_price.toFixed(2)}}元</span><br>
+                <span class="i_name">提现</span>：--<br>
 
-            <!-- 左侧图片信息 -->
-            <!--<el-col :span="8" style="height: 100%">
+            </div>
+            <div class="left_i">
+                <div class="i_title">BUFF转STEAM金额</div>
+                <span class="i_name">净利润</span>：<span class="i_value" :style="`color: ${item.buff_buy_steam_sell_value < 0 ? '#ee5555' : '#1DBF62'};`">{{item.buff_buy_steam_sell_value.toFixed(2)}}元</span><br>
+                <span class="i_name">净利率</span>：<span class="i_value" :style="`color: ${item.buff_buy_steam_sell_rate < 0 ? '#ee5555' : '#1DBF62'};`">{{item.buff_buy_steam_sell_rate.toFixed(2)}}%</span><br>
+                <span class="i_name">环亏损</span>：<span class="i_value" style="color: #9c9b9b;">{{item.buff_buy_steam_sell_rate2.toFixed(2)}}%</span><br>
 
+            </div>
+            <div class="left_i">
+                <div class="i_title">STEAM转BUFF金额</div>
+                <span class="i_name">净利润</span>：<span class="i_value" :style="`color: ${item.steam_buy_buff_sell_value < 0 ? '#ee5555' : '#1DBF62'};`">{{item.steam_buy_buff_sell_value.toFixed(2)}}元</span><br>
+                <span class="i_name">净利率</span>：<span class="i_value" :style="`color: ${item.steam_buy_buff_sell_rate < 0 ? '#ee5555' : '#1DBF62'};`">{{item.steam_buy_buff_sell_rate.toFixed(2)}}%</span><br>
+                <span class="i_name">环亏损</span>：<span class="i_value" style="color: #9c9b9b;">{{item.steam_buy_buff_sell_rate2.toFixed(2)}}%</span><br>
 
-
-            </el-col>-->
-
-
-
-<!--            <el-col :span="8">
-                <div class="grid-content bg-purple">
-
-                </div>
-            </el-col>
-            <el-col :span="8">
-                steam提升={{item.S_ADD_V}}元（{{item.S_ADD_R}}%）{{item.S_ADD_S}}  | 可买{{ item.maximumBuy }}件、可赚{{item.maximumProfit}}元（不考虑手续费）
-                <svg @click="openURL(item.steam_market_url)" t="1728075951550" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1482" width="32" height="32"><path d="M510.872 0.00004A511.738935 511.738935 0 0 0 0.578065 470.68598l274.473965 113.377986a144.332982 144.332982 0 0 1 89.621989-24.903997L486.810003 382.552991v-2.615999a193.084975 193.084975 0 1 1 193.049976 193.095975h-4.48L501.388001 697.214951c0 2.275 0.193 4.549999 0.193 6.823a144.799982 144.799982 0 0 1-286.766963 28.543996L18.227063 651.159957A511.965935 511.965935 0 1 0 510.792 0.00004h0.069zM321.404024 776.591941L258.540032 750.549945a108.772986 108.772986 0 1 0 59.599993-148.745981l64.967991 26.837996a80.09299 80.09299 0 1 1-61.646992 147.835981v0.114z m487.139938-396.767949A128.661984 128.661984 0 1 0 679.882979 508.439975a128.843984 128.843984 0 0 0 128.662983-128.616983z m-225.061971-0.228a96.661988 96.661988 0 1 1 96.661988 96.661988 96.433988 96.433988 0 0 1-96.661988-96.661988z" fill="#13227a" p-id="1483"></path></svg>
-            </el-col>-->
-<!--            {{item}}-->
-
+            </div>
         </el-row>
     </div>
+    <!-- 对话框-->
+    <el-dialog :title="`${sellItem.name}（${sellItem.sell_num}件）`" :visible.sync="dialogTableVisible" >
+        <div style="margin-bottom: 5px; background-color: #1a181c;">
+            <span style="color: #0099FF;">{{sellItem.name}}</span>
+            <span v-if="!tagItem.hidden"
+                  v-for="(tagItem, tagIndex) in sellItem.tagList"
+                  :key="tagIndex"
+                  :style="`color: ${tagItem.tag_bg}; border: 1px solid ${tagItem.tag_bg};`"
+                  style="margin: 2px; padding: 2px 3px 2px 3px; border-radius: 2px;"
+            >{{tagItem.tag_name}}</span>
+        </div>
+        <div>
+
+            <el-table :data="listSellData" style="width: 100%; " :header-cell-style="{backgroundColor: '#1a181c'}">
+                <el-table-column prop="paintwear" label="图像" width="180">
+                    <template slot-scope="scope">
+                        <el-image :src="scope.row.img_src" :style="`background: url('${scope.row.background_image_url}');box-shadow: 0 2px 0 0 ${scope.row.rarity_color};`"
+                                  style="height: 60px; padding: 0 20px 0 20px;"
+                        ></el-image>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="paintwear" label="磨损" width="180"> </el-table-column>
+                <el-table-column prop="price" label="价格" width="180"> </el-table-column>
+                <el-table-column prop="lowest_bargain_price" label="特价"> </el-table-column>
+            </el-table>
+        </div>
+    </el-dialog>
+
 </div>
 
 <script type="text/javascript">
@@ -274,9 +342,26 @@
             listDataInfo: {
                 total: 0
             },
-            showTags: ['exterior', 'quality', 'rarity', 'category'],
+
+
+            // 当前在售
+            dialogTableVisible: false,
+            sellItem: {},
+            listSellData: [],
+
+            // 交易手续费比例
+            premium: {
+                steam_buy: 0.05,
+                steam_sell: 0.15,
+                buff_buy: 0,
+                buff_sell: 0.025,
+                buff_payouts: 0.01  // buff提现
+            },
+
+
+            showTags: [ 'type', 'rarity', 'quality', 'exterior', 'category' ],
             enumMap: {
-                // 磨损枚举(完成)
+                // 磨损枚举(磨损级别)
                 exterior: {
                     wearcategory: {
                         localized_name: '无',
@@ -307,9 +392,8 @@
                         tag_color: 'rgba(138,136,136,0.95)'
                     }
                 },
-                // 品质枚举
+                // 品质枚举（稀有度）
                 rarity:{
-
                     contraband: {
                         localized_name: "违禁",
                         tag_color: 'rgb(228, 174, 57)'
@@ -379,14 +463,451 @@
                     },
 
                 },
-                // 新星
+                // 物品类型
+                type: {
+                    csgo_type_smg: {
+                        localized_name : "微型冲锋枪",
+                        tag_color: '#74a316'
+                    },
+                    csgo_type_rifle: {
+                        localized_name : "步枪",
+                        tag_color: '#74a316'
+                    },
+                    csgo_type_sniperrifle: {
+                        localized_name : "狙击步枪",
+                        tag_color: '#74a316'
+                    },
+                    csgo_type_machinegun: {
+                        localized_name : "机枪",
+                        tag_color: '#74a316'
+                    },
+                    csgo_type_knife: {
+                        localized_name : "匕首",
+                        tag_color: '#74a316'
+                    },
+                    csgo_type_pistol: {
+                        localized_name : "手枪",
+                        tag_color: '#74a316'
+                    },
+                    csgo_type_shotgun: {
+                        localized_name : "霰弹枪",
+                        tag_color: '#74a316'
+                    },
+                    csgo_tool_sticker: {
+                        localized_name : "印花",
+                        tag_color: '#74a316'
+                    },
+                    type_customplayer: {
+                        localized_name : "探员",
+                        tag_color: '#74a316'
+                    },
+                    csgo_type_musickit: {
+                        localized_name : "音乐盒",
+                        tag_color: '#74a316'
+                    },
+                    csgo_type_spray: {
+                        localized_name : "涂鸦",
+                        tag_color: '#74a316'
+                    },
+                    type_hands: {
+                        localized_name : "手套",
+                        tag_color: '#74a316'
+                    },
+                    csgo_tool_patch: {
+                        localized_name : "布章",
+                        tag_color: '#74a316'
+                    },
+                    csgo_type_tool: {
+                        localized_name : "工具",
+                        tag_color: '#74a316'
+                    },
+                    csgo_type_collectible: {
+                        localized_name : "收藏品",
+                        tag_color: '#74a316'
+                    },
+                },
+                // 枪械名类
                 category: {
+                    // 匕首
+                    weapon_knife_butterfly: {
+                        localized_name : "蝴蝶刀",
+                        tag_color: '#4186d8'
+                    },
+                    weapon_knife_karambit: {
+                        localized_name : "爪子刀",
+                        tag_color: '#4186d8'
+                    },
+                    weapon_knife_widowmaker: {
+                        localized_name : "锯齿爪刀",
+                        tag_color: '#4186d8'
+                    },
+                    weapon_knife_flip: {
+                        localized_name : "折叠刀",
+                        tag_color: '#4186d8'
+                    },
+                    weapon_knife_css: {
+                        localized_name : "海豹短刀",
+                        tag_color: '#4186d8'
+                    },
+                    weapon_knife_survival_bowie: {
+                        localized_name : "鲍伊猎刀",
+                        tag_color: '#4186d8'
+                    },
+                    weapon_knife_outdoor: {
+                        localized_name : "流浪者匕首",
+                        tag_color: '#4186d8'
+                    },
+                    weapon_knife_gut: {
+                        localized_name : "穿肠刀",
+                        tag_color: '#4186d8'
+                    },
+                    weapon_bayonet: {
+                        localized_name : "刺刀",
+                        tag_color: '#4186d8'
+                    },
+                    weapon_knife_skeleton: {
+                        localized_name : "骷髅匕首",
+                        tag_color: '#4186d8'
+                    },
+                    weapon_knife_stiletto: {
+                        localized_name : "短剑",
+                        tag_color: '#4186d8'
+                    },
+                    weapon_knife_tactical: {
+                        localized_name : "猎杀者匕首",
+                        tag_color: '#4186d8'
+                    },
+                    weapon_knife_kke: {
+                        localized_name : "廓尔喀刀",
+                        tag_color: '#4186d8'
+                    },
+                    // 手枪
+                    weapon_usp_silencer: {
+                        localized_name : "USP 消音版",
+                        tag_color: '#4186d8'
+                    },
+                    weapon_zeus: {
+                        localized_name : "电击枪",
+                        tag_color: '#4186d8'
+                    },
+                    weapon_p250: {
+                        localized_name : "P250",
+                        tag_color: '#4186d8'
+                    },
+                    weapon_tec9: {
+                        localized_name : "Tec-9",
+                        tag_color: '#4186d8'
+                    },
+                    weapon_deagle: {
+                        localized_name : "沙漠之鹰",
+                        tag_color: '#4186d8'
+                    },
+                    weapon_glock: {
+                        localized_name : "格洛克 18 型",
+                        tag_color: '#4186d8'
+                    },
+                    weapon_hkp2000: {
+                        localized_name : "P2000",
+                        tag_color: '#4186d8'
+                    },
+                    weapon_cz75a: {
+                        localized_name : "CZ75 自动手枪",
+                        tag_color: '#4186d8'
+                    },
+                    weapon_elite: {
+                        localized_name : "双持贝瑞塔",
+                        tag_color: '#4186d8'
+                    },
+                    weapon_fiveseven: {
+                        localized_name : "FN57",
+                        tag_color: '#4186d8'
+                    },
+                    weapon_revolver: {
+                        localized_name : "R8 左轮手枪",
+                        tag_color: '#4186d8'
+                    },
+                    // 喷子
                     weapon_nova: {
                         localized_name : "新星",
                         tag_color: '#4186d8'
-                    }
+                    },
+                    weapon_xm1014: {
+                        localized_name : "XM104",
+                        tag_color: '#4186d8'
+                    },
+                    weapon_mag7: {
+                        localized_name : "MAG-7",
+                        tag_color: '#4186d8'
+                    },
+                    weapon_sawedoff: {
+                        localized_name : "截短霰弹枪",
+                        tag_color: '#4186d8'
+                    },
+                    // 冲锋枪
+                    weapon_mp5sd: {
+                        localized_name : "MP5-SD",
+                        tag_color: '#4186d8'
+                    },
+                    weapon_mp7: {
+                        localized_name : "MP7",
+                        tag_color: '#4186d8'
+                    },
+                    weapon_mp9: {
+                        localized_name : "MP9",
+                        tag_color: '#4186d8'
+                    },
+                    weapon_ump45: {
+                        localized_name : "UMP-45",
+                        tag_color: '#4186d8'
+                    },
+                    weapon_mac10: {
+                        localized_name : "MAC-10",
+                        tag_color: '#4186d8'
+                    },
+                    weapon_p90: {
+                        localized_name : "P90",
+                        tag_color: '#4186d8'
+                    },
+                    weapon_bizon: {
+                        localized_name : "PP-野牛",
+                        tag_color: '#4186d8'
+                    },
+                    // 步枪
+                    weapon_m4a1: {
+                        localized_name : "M4A4",
+                        tag_color: '#4186d8'
+                    },
+                    weapon_m4a1_silencer: {
+                        localized_name : "M4A1 消音版",
+                        tag_color: '#4186d8'
+                    },
+                    weapon_aug: {
+                        localized_name : "AUG",
+                        tag_color: '#4186d8'
+                    },
+                    weapon_famas: {
+                        localized_name : "法玛斯",
+                        tag_color: '#4186d8'
+                    },
+                    weapon_galilar: {
+                        localized_name : "加利尔 AR",
+                        tag_color: '#4186d8'
+                    },
+                    weapon_scar20: {
+                        localized_name : "SCAR-20",
+                        tag_color: '#4186d8'
+                    },
+                    weapon_ak47: {
+                        localized_name : "AK-47",
+                        tag_color: '#4186d8'
+                    },
+                    weapon_sg556: {
+                        localized_name : "SG 553",
+                        tag_color: '#4186d8'
+                    },
+                    // 狙击枪
+                    weapon_awp: {
+                        localized_name : "AWP",
+                        tag_color: '#4186d8'
+                    },
+                    weapon_ssg08: {
+                        localized_name : "SSG 08",
+                        tag_color: '#4186d8'
+                    },
+                    weapon_g3sg1: {
+                        localized_name : "G3SG1",
+                        tag_color: '#4186d8'
+                    },
+                    // 机枪
+                    weapon_negev:{
+                        localized_name : "内格夫",
+                        tag_color: '#4186d8'
+                    },
+                    weapon_m249:{
+                        localized_name : "M249",
+                        tag_color: '#4186d8'
+                    },
+
+                    // 音乐盒
+                    csgo_type_musickit: {
+                        localized_name : "音乐盒",
+                        tag_color: '#4186d8',
+                        hidden: true
+                    },
+                    // 探员
+                    agent_team_ct: {
+                        localized_name : "反恐精英",
+                        tag_color: '#4186d8'
+                    },
+                    agent_team_t: {
+                        localized_name : "恐怖分子",
+                        tag_color: '#4186d8'
+                    },
+                    // 手套
+                    weapon_moto_gloves: {
+                        localized_name : "摩托手套",
+                        tag_color: '#4186d8'
+                    },
+                    weapon_driver_gloves: {
+                        localized_name : "驾驶手套",
+                        tag_color: '#4186d8'
+                    },
+                    weapon_sport_gloves: {
+                        localized_name : "运动手套",
+                        tag_color: '#4186d8'
+                    },
+                    weapon_hand_wraps: {
+                        localized_name : "手部束带",
+                        tag_color: '#4186d8'
+                    },
+                    weapon_specialist_gloves: {
+                        localized_name : "专业手套",
+                        tag_color: '#4186d8'
+                    },
+                    // 印花（略）
+
+                    'poorly_drawn': {
+                        localized_name : "poorly_drawn",
+                        tag_color: '#4186d8',
+                        hidden: true
+                    },
+                    '2019_StarLadder_Berlin_Major': {
+                        localized_name : "2019_StarLadder_Berlin_Major",
+                        tag_color: '#4186d8',
+                        hidden: true
+                    },
+                    'halo_capsule': {
+                        localized_name : "halo_capsule",
+                        tag_color: '#4186d8',
+                        hidden: true
+                    },
+                    'crate_sticker_pack_feral_predators_capsule_lootlist': {
+                        localized_name : "crate_sticker_pack_feral_predators_capsule_lootlist",
+                        tag_color: '#4186d8',
+                        hidden: true
+                    },
+                    'crate_sticker_pack_op_riptide_capsule_lootlist': {
+                        localized_name : "crate_sticker_pack_op_riptide_capsule_lootlist",
+                        tag_color: '#4186d8',
+                        hidden: true
+                    },
+                    'crate_sticker_pack_riptide_surfshop_lootlist': {
+                        localized_name : "crate_sticker_pack_riptide_surfshop_lootlist",
+                        tag_color: '#4186d8',
+                        hidden: true
+                    },
+                    'crate_sticker_pack_comm2018_01_capsule_lootlist': {
+                        localized_name : "crate_sticker_pack_comm2018_01_capsule_lootlist",
+                        tag_color: '#4186d8',
+                        hidden: true
+                    },
+                    'crate_sticker_pack_bf2042_capsule_lootlist': {
+                        localized_name : "团队定位胶囊",
+                        tag_color: '#4186d8',
+                        // hidden: true
+                    },
+                    'crate_sticker_pack_bestiary_capsule_lootlist': {
+                        localized_name : "动物寓言胶囊",
+                        tag_color: '#4186d8',
+                        // hidden: true
+                    },
+                    'crate_sticker_pack_team_roles_capsule_lootlist': {
+                        localized_name : "sticker_recoil",
+                        tag_color: '#4186d8',
+                        hidden: true
+                    },
+                    'sticker_tournament14': {
+                        localized_name : "sticker_tournament14",
+                        tag_color: '#4186d8',
+                        hidden: true
+                    },
+                    'sticker_tournament15': {
+                        localized_name : "sticker_tournament15",
+                        tag_color: '#4186d8',
+                        hidden: true
+                    },
+                    'sticker_tournament16': {
+                        localized_name : "sticker_tournament16",
+                        tag_color: '#4186d8',
+                        hidden: true
+                    },
+                    'sticker_tournament17': {
+                        localized_name : "sticker_tournament17",
+                        tag_color: '#4186d8',
+                        hidden: true
+                    },
+                    'sticker_tournament18': {
+                        localized_name : "sticker_tournament18",
+                        tag_color: '#4186d8',
+                        hidden: true
+                    },
+                    'sticker_tournament19': {
+                        localized_name : "sticker_tournament19",
+                        tag_color: '#4186d8',
+                        hidden: true
+                    },
+                    'sticker_tournament20': {
+                        localized_name : "sticker_tournament20",
+                        tag_color: '#4186d8',
+                        hidden: true
+                    },
+                    'sticker_tournament21': {
+                        localized_name : "sticker_tournament21",
+                        tag_color: '#4186d8',
+                        // hidden: true
+                    },
+                    'sticker_tournament22': {
+                        localized_name : "sticker_tournament22",
+                        tag_color: '#4186d8',
+                        hidden: true
+                    },
+                    'shattered_web': {
+                        localized_name : "shattered_web",
+                        tag_color: '#4186d8',
+                        hidden: true
+                    },
+                    'skill_groups_capsule': {
+                        localized_name : "skill_groups_capsule",
+                        tag_color: '#4186d8',
+                        hidden: true
+                    },
+                    'sticker_recoil': {
+                        localized_name : "sticker_recoil",
+                        tag_color: '#4186d8',
+                        hidden: true
+                    },
+                    'sticker_other': {
+                        localized_name : "sticker_other",
+                        tag_color: '#4186d8',
+                        hidden: true
+                    },
+                    // 涂鸦
+                    csgo_type_spray: {
+                        localized_name : "涂鸦",
+                        tag_color: '#4186d8',
+                        hidden: true
+                    },
+                    csgo_tool_patch: {
+                        localized_name : "布章",
+                        tag_color: '#4186d8',
+                        hidden: true
+                    },
+
+                    csgo_type_tool: {
+                        localized_name : "工具",
+                        tag_color: '#4186d8',
+                        hidden: true
+                    },
+
+                    csgo_type_collectible: {
+                        localized_name : "收藏品",
+                        tag_color: '#4186d8',
+                        hidden: true
+                    },
+
+
                 },
-                // 特殊品质
+                // 特殊品质（纪念、暗金）
                 quality: {
                     normal:{
                         localized_name: "普通",
@@ -416,33 +937,56 @@
         created() {
             this.loadData()
 
-
-
-            // this.load2();
-
         },
         methods: {
 
-            // 处理排序
-            handlerListDataSort(items){
-
-            // return items
-
-                return items.sort((a, b) =>  a['price_difference'].toFixed(2) - b['price_difference'].toFixed(2))
-
+            openSell(item){
+                this.loadSellListData(item)
+                this.sellItem = item
+                // 打开列表对话框
+                this.dialogTableVisible = true
+            },
+            handlerSellListData(items, useItem) {
+                const newList = []
+                items.forEach(item => {
+                    newList.push({
+                        img_src: item.img_src,                                        // 图片
+                        background_image_url: item.background_image_url,              // 背景图片
+                        paintwear: item.asset_info.paintwear,                         // 磨损
+                        price: item.price,                                            // 价格
+                        lowest_bargain_price: item.lowest_bargain_price,              // 最低特价
+                        rarity_color: useItem.rarity_color                            // yanse
+                    })
+                })
+                return newList
             },
 
+
+
+            // 处理排序
+            handlerListDataSort(items){
+                // 差价比例排序
+                return items.sort((a, b) =>  b['S_ADD_R'] - a['S_ADD_R'])
+            },
             getTagEnumItemObj(tags, enumName){
                 const typeObj = tags[enumName]
                 const typeEnum = this.enumMap[enumName]
                 if (typeObj && typeEnum) {
                     const enumKey = typeObj.internal_name
-                    return typeEnum[enumKey]
+                    const obj = typeEnum[enumKey]
+                    if (obj) {
+                        return typeEnum[enumKey]
+                    }
+                }
+                // 用于寻找
+                if (typeObj) {
+                    return {
+                        localized_name: typeObj.localized_name + ' ' + typeObj.internal_name,
+                        tag_color: '#ffffff'
+                    }
                 }
                 return null
             },
-
-
             handlerListData(items) {
                 const newList = []
                 items.forEach(item => {
@@ -493,12 +1037,11 @@
                         newItem['tagList'] = tagList
                     }
 
-
-
                     // 其它
                     const sellCount = item.sell_num
                     newItem['sell_num'] = sellCount                                          // 在售数量
                     newItem['name'] = item.name                                              // 饰品名称
+                    newItem['goods_id'] = item.id                                            // 饰品id
                     newItem['steam_market_url'] = item.steam_market_url                      // steam市场地址
                     newItem['icon_url'] = item.goods_info.icon_url                           // 饰品图片
 
@@ -508,6 +1051,36 @@
                     newItem['maximumBuy'] = maximumBuy
                     newItem['maximumProfit'] = (maximumBuy * difference).toFixed(2)          // 当前利润(不考虑手续费)
 
+
+                    // 买入价卖出价
+                    const buff_buy_price = buffPrice * (1 + this.premium.buff_buy)
+                    const buff_sell_price = buffPrice * (1 - this.premium.buff_sell)
+                    const buff_sell_price2 = buffPrice * (1 - this.premium.buff_sell - this.premium.buff_payouts)  // 考虑提现
+                    const steam_buy_price = steamPrice * (1 + this.premium.steam_buy)
+                    const steam_sell_price = steamPrice * (1 - this.premium.steam_sell)
+                    newItem['buff_buy_price'] = buff_buy_price
+                    newItem['buff_sell_price'] = buff_sell_price
+                    newItem['buff_sell_price2'] = buff_sell_price2
+                    newItem['steam_buy_price'] = steam_buy_price
+                    newItem['steam_sell_price'] = steam_sell_price
+
+                    // 倒卖差额
+                    // buff买、steam卖
+                    const steam_add_value = steam_sell_price - buff_buy_price                // 最终利润（steam利润不可提现）
+                    newItem['buff_buy_steam_sell_value'] = steam_add_value
+                    newItem['buff_buy_steam_sell_rate'] = steam_add_value / buff_buy_price * 100
+
+
+                    // steam买、buff卖
+                    const buff_add_value = buff_sell_price - steam_buy_price
+                    newItem['steam_buy_buff_sell_value'] = buff_add_value
+                    newItem['steam_buy_buff_sell_rate'] = buff_add_value / steam_buy_price * 100
+
+                    // 回转收益
+                    newItem['buff_buy_steam_sell_rate2'] = (steam_add_value + buff_add_value) / buff_buy_price * 100
+                    newItem['steam_buy_buff_sell_rate2'] = (buff_add_value + steam_add_value) / steam_buy_price * 100
+
+
                     newList.push(newItem)
                 })
                 return newList;
@@ -516,10 +1089,10 @@
 
             // 加载表格数据
             // 跨域启动浏览器 ->  C:\Program^ Files\Google\Chrome\Application\chrome.exe --disable-web-security --user-data-dir="D:\chrom_temp\profile"
+            // https://buff.163.com/api/market/goods?game=csgo&page_num=1&tab=sellin&use_suggestion=0&_=1728069501347&page_size=80&fold=true
             async loadData() {
                 // document.cookie = this.cookieStr; // 修改本地cookie
                 let that = this
-
                 axios.get("https://buff.163.com/api/market/goods", {
                     // headers: { "cookie": that.cookieStr },
                     params: {
@@ -527,7 +1100,7 @@
                         page_num: 1,
                         tab: 'sellin',
                         use_suggestion: 0,
-                        _: '1728069501347',
+                        _: new Date().getTime(),
 
                         page_size: 80,     // 最大80
                         // search: 'ak',
@@ -542,7 +1115,38 @@
                             that.listDataInfo['total'] = itemData['total_count']
                             const dataList = itemData.items
                             // that.listData = that.handlerListData(dataList)
-                            that.listData = that.handlerListDataSort(that.handlerListData(dataList))
+                            const list = that.handlerListData(dataList)
+                            that.listData = that.handlerListDataSort(list)
+                        }
+                    }
+                }).catch(err => {
+
+                })
+            },
+
+
+
+            // 获取售卖列表
+            // https://buff.163.com/api/market/goods/sell_order?game=csgo&goods_id=921545&page_num=1&sort_by=default&mode=&allow_tradable_cooldown=1&_=1728244618384
+            async loadSellListData(useItem){
+                let that = this
+                axios.get("https://buff.163.com/api/market/goods/sell_order", {
+                    // headers: { "cookie": that.cookieStr },
+                    params: {
+                        game: 'csgo',
+                        goods_id: useItem.goods_id,
+                        page_num: 1,
+                        sort_by: 'default',
+                        mode: '',
+                        allow_tradable_cooldown: 1,
+                        _: new Date().getTime()
+                    }
+                }).then(await function (res) {
+                    if (res.data && res.data["code"] === "OK") {
+                        const itemData = res.data["data"]
+                        if (itemData) {
+                            that.listSellData = that.handlerSellListData(itemData.items, useItem)
+
                         }
                     }
                 })

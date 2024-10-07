@@ -5,6 +5,14 @@ const clazzCard = [
         "show": true,
         "children": [
             {
+                "title": "悠悠有品",
+                "show": true,
+                "type": "page",
+                "info": "./pages/csgo_youyou/index.html",
+                "img": "components/card_image/csgo_youyou.png",
+                "desc": "查看悠悠有品上csgo饰品信息，比较与steam的价格比例。"
+            },
+            {
                 "title": "BUFF市场",
                 "show": true,
                 "type": "page",

@@ -217,9 +217,42 @@
             某些功能可能需要您登录BUFF平台：<a style="color: #3a8ee6;" href="https://buff.163.com/" target="_blank">BUFF登录</a>
         </div>
         <div style="font-size: 12px;">共发现<span style="color: #eea20e">{{ " " + listDataInfo.total + " " }}</span>种饰品！</div>
-        <div style="font-size: 12px;">steam出售手续费15%、购买手续费5%.</div>
+<!--        <div style="font-size: 12px;">steam出售手续费15%、购买手续费5%.</div>
         <div style="font-size: 12px;">buff交易手续费2.5%、提现手续费1%.</div>
-        <div style="font-size: 12px; color: #cf9236">环亏损是指经过A->B->A过程后因A、B平台抽成导致的总亏损百分比.</div>
+        <div style="font-size: 12px; color: #cf9236">环亏损是指经过A->B->A过程后因A、B平台抽成导致的总亏损百分比.</div>-->
+        <div class="query">
+            <el-menu mode="horizontal"
+                    :default-active="0"
+                    class="el-menu-demo"
+
+                    @select="handleSelect"
+                    background-color="rgba(27, 27, 25, 0)"
+                    text-color="#fff"
+                    active-text-color="#ffd04b">
+                <el-submenu index="rarity">
+                    <template slot="title">品质</template>
+                    <el-submenu v-for="(item, key) in enumMap.rarity_type" :index="key">
+                        <template slot="title"><span :style="`color: ${item.tag_color};`">{{item.localized_name}}</span></template>
+                        <el-menu-item v-if="key === item2.rarity_type" v-for="(item2, key2) in enumMap.rarity" :index="key2"><span :style="`color: ${item2.tag_color};`">{{item2.localized_name}}</span></el-menu-item>
+                    </el-submenu>
+                </el-submenu>
+                <el-submenu index="quality">
+                    <template slot="title">类别</template>
+                    <el-menu-item v-for="(item, key) in enumMap.quality" :index="key"><span :style="`color: ${item.tag_color};`">{{item.localized_name}}</span></el-menu-item>
+                </el-submenu>
+                <el-submenu index="exterior">
+                    <template slot="title">外观</template>
+                    <el-menu-item v-for="(item, key) in enumMap.exterior" :index="key"><span :style="`color: ${item.tag_color};`">{{item.localized_name}}</span></el-menu-item>
+                </el-submenu>
+                <el-submenu index="category">
+                    <template slot="title">类型</template>
+                    <el-submenu v-for="(item, key) in enumMap.type" :index="key">
+                        <template slot="title"><span :style="`color: ${item.tag_color};`">{{item.localized_name}}</span></template>
+                        <el-menu-item v-if="key === item2.type" v-for="(item2, key2) in enumMap.category" :index="key2"><span :style="`color: ${item2.tag_color};`">{{item2.localized_name}}</span></el-menu-item>
+                    </el-submenu>
+                </el-submenu>
+            </el-menu>
+        </div>
     </div>
     <div class="list_body">
         <el-row class="list_row" v-for="(item, index) in listData" :key="index">
@@ -315,7 +348,6 @@
             >{{tagItem.tag_name}}</span>
         </div>
         <div>
-
             <el-table :data="listSellData" style="width: 100%; " :header-cell-style="{backgroundColor: '#1a181c'}">
                 <el-table-column prop="paintwear" label="图像" width="180">
                     <template slot-scope="scope">
@@ -345,6 +377,14 @@
             listDataInfo: {
                 total: 0
             },
+            query:{
+                exterior: '',    // 外观：磨损
+                rarity: '',      // 品质：稀有级别
+                type: '',        // 枪类
+                category: '',    // 枪型
+                quality: '',     // 特殊品质（暗金）
+                search: '',      // 搜索名称
+            },
 
 
             // 当前在售
@@ -364,11 +404,27 @@
 
             showTags: [ 'type', 'rarity', 'quality', 'exterior', 'category' ],
             enumMap: {
+                // 自定义：品质类别
+                rarity_type: {
+                    wu_qi: {
+                        localized_name: "武器",
+                        tag_color: 'rgb(148,162,177)'
+                    },
+                    yin_hua: {
+                        localized_name: "印花",
+                        tag_color: 'rgb(148,162,177)'
+                    },
+                    tan_yuan: {
+                        localized_name: "探员",
+                        tag_color: 'rgb(148,162,177)'
+                    },
+                },
+
                 // 磨损枚举(磨损级别)
                 exterior: {
                     wearcategory: {
                         localized_name: '无',
-                        tag_color: 'rgba(255,255,255,0)'
+                        tag_color: 'rgba(138,136,136,0.95)'
                     },
                     wearcategory0: {
                         localized_name: '崭新出厂',
@@ -397,70 +453,88 @@
                 },
                 // 品质枚举（稀有度）
                 rarity:{
+                    // 武器
                     contraband: {
+                        rarity_type: 'wu_qi',
                         localized_name: "违禁",
                         tag_color: 'rgb(228, 174, 57)'
                     },
                     ancient_weapon: {
+                        rarity_type: 'wu_qi',
                         localized_name: "隐秘",
                         tag_color: 'rgb(235, 75, 75)'
                     },
                     legendary_weapon: {
+                        rarity_type: 'wu_qi',
                         localized_name: "保密",
                         tag_color: 'rgb(211, 44, 230)'
                     },
                     mythical_weapon: {
+                        rarity_type: 'wu_qi',
                         localized_name: "受限",
                         tag_color: 'rgb(136, 71, 255)'
                     },
                     rare_weapon: {
+                        rarity_type: 'wu_qi',
                         localized_name: "军规级",
                         tag_color: 'rgb(75, 105, 255)'
                     },
                     uncommon_weapon: {
+                        rarity_type: 'wu_qi',
                         localized_name: "工业级",
                         tag_color: 'rgb(94, 152, 217)'
                     },
                     common_weapon: {
+                        rarity_type: 'wu_qi',
                         localized_name: "消费级",
                         tag_color: 'rgb(176, 195, 217)'
                     },
+
                     // 印花
                     ancient: {
+                        rarity_type: 'yin_hua',
                         localized_name: "非凡",
                         tag_color: 'rgb(235, 75, 75)'
                     },
                     mythical: {
+                        rarity_type: 'yin_hua',
                         localized_name: "卓越",
                         tag_color: 'rgb(136, 71, 255)'
                     },
                     legendary: {
+                        rarity_type: 'yin_hua',
                         localized_name: "奇异",
                         tag_color: 'rgb(211, 44, 230)'
                     },
                     rare: {
+                        rarity_type: 'yin_hua',
                         localized_name: "高级",
                         tag_color: 'rgb(75, 105, 255)'
                     },
 
                     common: {
+                        rarity_type: 'yin_hua',
                         localized_name: "普通级",
                         tag_color: 'rgb(176, 195, 217)'
                     },
                     // 探员
                     rare_character: {
+                        rarity_type: 'tan_yuan',
                         localized_name: "高级",
                         tag_color: 'rgb(75, 105, 255)'
                     },
                     mythical_character: {
+                        rarity_type: 'tan_yuan',
                         localized_name: "卓越",
                         tag_color: 'rgb(136, 71, 255)'
                     },
                     legendary_character: {
+                        rarity_type: 'tan_yuan',
                         localized_name: "非凡",
                         tag_color: 'rgb(211, 44, 230)'
                     },
                     ancient_character: {
+                        rarity_type: 'tan_yuan',
                         localized_name: "大师",
                         tag_color: 'rgb(235, 75, 75)'
                     },
@@ -468,64 +542,79 @@
                 },
                 // 物品类型
                 type: {
-                    csgo_type_smg: {
-                        localized_name : "微型冲锋枪",
-                        tag_color: '#74a316'
-                    },
-                    csgo_type_rifle: {
-                        localized_name : "步枪",
-                        tag_color: '#74a316'
-                    },
-                    csgo_type_sniperrifle: {
-                        localized_name : "狙击步枪",
-                        tag_color: '#74a316'
-                    },
-                    csgo_type_machinegun: {
-                        localized_name : "机枪",
-                        tag_color: '#74a316'
-                    },
                     csgo_type_knife: {
+                        internal_name: 'csgo_type_knife',
                         localized_name : "匕首",
                         tag_color: '#74a316'
                     },
                     csgo_type_pistol: {
+                        internal_name: 'csgo_type_pistol',
                         localized_name : "手枪",
                         tag_color: '#74a316'
                     },
                     csgo_type_shotgun: {
+                        internal_name: 'csgo_type_shotgun',
                         localized_name : "霰弹枪",
                         tag_color: '#74a316'
                     },
-                    csgo_tool_sticker: {
-                        localized_name : "印花",
+                    csgo_type_smg: {
+                        internal_name: 'csgo_type_smg',
+                        localized_name : "微型冲锋枪",
+                        tag_color: '#74a316'
+                    },
+                    csgo_type_rifle: {
+                        internal_name: 'csgo_type_rifle',
+                        localized_name : "步枪",
+                        tag_color: '#74a316'
+                    },
+                    csgo_type_sniperrifle: {
+                        internal_name: 'csgo_type_sniperrifle',
+                        localized_name : "狙击步枪",
+                        tag_color: '#74a316'
+                    },
+                    csgo_type_machinegun: {
+                        internal_name: '',
+                        localized_name : "机枪",
+                        tag_color: '#74a316'
+                    },
+                    type_hands: {
+                        internal_name: 'type_hands',
+                        localized_name : "手套",
                         tag_color: '#74a316'
                     },
                     type_customplayer: {
+                        internal_name: 'type_customplayer',
                         localized_name : "探员",
                         tag_color: '#74a316'
                     },
                     csgo_type_musickit: {
+                        internal_name: 'csgo_type_musickit',
                         localized_name : "音乐盒",
                         tag_color: '#74a316'
                     },
-                    csgo_type_spray: {
-                        localized_name : "涂鸦",
-                        tag_color: '#74a316'
-                    },
-                    type_hands: {
-                        localized_name : "手套",
-                        tag_color: '#74a316'
-                    },
                     csgo_tool_patch: {
+                        internal_name: 'csgo_tool_patch',
                         localized_name : "布章",
                         tag_color: '#74a316'
                     },
+                    csgo_type_spray: {
+                        internal_name: 'csgo_type_spray',
+                        localized_name : "涂鸦",
+                        tag_color: '#74a316'
+                    },
                     csgo_type_tool: {
+                        internal_name: 'csgo_type_tool',
                         localized_name : "工具",
                         tag_color: '#74a316'
                     },
                     csgo_type_collectible: {
+                        internal_name: 'csgo_type_collectible',
                         localized_name : "收藏品",
+                        tag_color: '#74a316'
+                    },
+                    csgo_tool_sticker: {
+                        internal_name: 'csgo_tool_sticker',
+                        localized_name : "印花",
                         tag_color: '#74a316'
                     },
                 },
@@ -533,389 +622,559 @@
                 category: {
                     // 匕首
                     weapon_knife_butterfly: {
+                        internal_name: 'weapon_knife_butterfly',
+                        type: 'csgo_type_knife',
                         localized_name : "蝴蝶刀",
                         tag_color: '#4186d8'
                     },
                     weapon_knife_karambit: {
+                        internal_name: 'weapon_knife_karambit',
+                        type: 'csgo_type_knife',
                         localized_name : "爪子刀",
                         tag_color: '#4186d8'
                     },
                     weapon_knife_m9_bayonet: {
+                        internal_name: 'weapon_knife_m9_bayonet',
+                        type: 'csgo_type_knife',
                         localized_name : "M9 刺刀",
                         tag_color: '#4186d8'
                     },
                     weapon_knife_widowmaker: {
+                        internal_name: 'weapon_knife_widowmaker',
+                        type: 'csgo_type_knife',
                         localized_name : "锯齿爪刀",
                         tag_color: '#4186d8'
                     },
                     weapon_knife_flip: {
+                        internal_name: 'weapon_knife_flip',
+                        type: 'csgo_type_knife',
                         localized_name : "折叠刀",
                         tag_color: '#4186d8'
                     },
                     weapon_knife_css: {
+                        internal_name: 'weapon_knife_css',
+                        type: 'csgo_type_knife',
                         localized_name : "海豹短刀",
                         tag_color: '#4186d8'
                     },
                     weapon_knife_survival_bowie: {
+                        internal_name: 'weapon_knife_survival_bowie',
+                        type: 'csgo_type_knife',
                         localized_name : "鲍伊猎刀",
                         tag_color: '#4186d8'
                     },
                     weapon_knife_outdoor: {
+                        internal_name: 'weapon_knife_outdoor',
+                        type: 'csgo_type_knife',
                         localized_name : "流浪者匕首",
                         tag_color: '#4186d8'
                     },
                     weapon_knife_gut: {
+                        internal_name: 'weapon_knife_gut',
+                        type: 'csgo_type_knife',
                         localized_name : "穿肠刀",
                         tag_color: '#4186d8'
                     },
                     weapon_bayonet: {
+                        internal_name: 'weapon_bayonet',
+                        type: 'csgo_type_knife',
                         localized_name : "刺刀",
                         tag_color: '#4186d8'
                     },
                     weapon_knife_skeleton: {
+                        internal_name: 'weapon_knife_skeleton',
+                        type: 'csgo_type_knife',
                         localized_name : "骷髅匕首",
                         tag_color: '#4186d8'
                     },
                     weapon_knife_stiletto: {
+                        internal_name: 'weapon_knife_stiletto',
+                        type: 'csgo_type_knife',
                         localized_name : "短剑",
                         tag_color: '#4186d8'
                     },
                     weapon_knife_tactical: {
+                        internal_name: 'weapon_knife_tactical',
+                        type: 'csgo_type_knife',
                         localized_name : "猎杀者匕首",
                         tag_color: '#4186d8'
                     },
                     weapon_knife_kke: {
+                        internal_name: 'weapon_knife_kke',
+                        type: 'csgo_type_knife',
                         localized_name : "廓尔喀刀",
                         tag_color: '#4186d8'
                     },
                     // 手枪
                     weapon_usp_silencer: {
+                        internal_name: 'weapon_usp_silencer',
+                        type: 'csgo_type_pistol',
                         localized_name : "USP 消音版",
                         tag_color: '#4186d8'
                     },
                     weapon_zeus: {
+                        internal_name: 'weapon_zeus',
+                        type: 'csgo_type_pistol',
                         localized_name : "电击枪",
                         tag_color: '#4186d8'
                     },
                     weapon_p250: {
+                        internal_name: 'weapon_p250',
+                        type: 'csgo_type_pistol',
                         localized_name : "P250",
                         tag_color: '#4186d8'
                     },
                     weapon_tec9: {
+                        internal_name: 'weapon_tec9',
+                        type: 'csgo_type_pistol',
                         localized_name : "Tec-9",
                         tag_color: '#4186d8'
                     },
                     weapon_deagle: {
+                        internal_name: 'weapon_deagle',
+                        type: 'csgo_type_pistol',
                         localized_name : "沙漠之鹰",
                         tag_color: '#4186d8'
                     },
                     weapon_glock: {
+                        internal_name: 'weapon_glock',
+                        type: 'csgo_type_pistol',
                         localized_name : "格洛克 18 型",
                         tag_color: '#4186d8'
                     },
                     weapon_hkp2000: {
+                        internal_name: 'weapon_hkp2000',
+                        type: 'csgo_type_pistol',
                         localized_name : "P2000",
                         tag_color: '#4186d8'
                     },
                     weapon_cz75a: {
+                        internal_name: 'weapon_cz75a',
+                        type: 'csgo_type_pistol',
                         localized_name : "CZ75 自动手枪",
                         tag_color: '#4186d8'
                     },
                     weapon_elite: {
+                        internal_name: 'weapon_elite',
+                        type: 'csgo_type_pistol',
                         localized_name : "双持贝瑞塔",
                         tag_color: '#4186d8'
                     },
                     weapon_fiveseven: {
+                        internal_name: 'weapon_fiveseven',
+                        type: 'csgo_type_pistol',
                         localized_name : "FN57",
                         tag_color: '#4186d8'
                     },
                     weapon_revolver: {
+                        internal_name: 'weapon_revolver',
+                        type: 'csgo_type_pistol',
                         localized_name : "R8 左轮手枪",
                         tag_color: '#4186d8'
                     },
                     // 喷子
                     weapon_nova: {
+                        internal_name: 'weapon_nova',
+                        type: 'csgo_type_shotgun',
                         localized_name : "新星",
                         tag_color: '#4186d8'
                     },
                     weapon_xm1014: {
+                        internal_name: 'weapon_xm1014',
+                        type: 'csgo_type_shotgun',
                         localized_name : "XM104",
                         tag_color: '#4186d8'
                     },
                     weapon_mag7: {
+                        internal_name: 'weapon_mag7',
+                        type: 'csgo_type_shotgun',
                         localized_name : "MAG-7",
                         tag_color: '#4186d8'
                     },
                     weapon_sawedoff: {
+                        internal_name: 'weapon_sawedoff',
+                        type: 'csgo_type_shotgun',
                         localized_name : "截短霰弹枪",
                         tag_color: '#4186d8'
                     },
                     // 冲锋枪
                     weapon_mp5sd: {
+                        internal_name: 'weapon_mp5sd',
+                        type: 'csgo_type_smg',
                         localized_name : "MP5-SD",
                         tag_color: '#4186d8'
                     },
                     weapon_mp7: {
+                        internal_name: 'weapon_mp7',
+                        type: 'csgo_type_smg',
                         localized_name : "MP7",
                         tag_color: '#4186d8'
                     },
                     weapon_mp9: {
+                        internal_name: 'weapon_mp9',
+                        type: 'csgo_type_smg',
                         localized_name : "MP9",
                         tag_color: '#4186d8'
                     },
                     weapon_ump45: {
+                        internal_name: 'weapon_ump45',
+                        type: 'csgo_type_smg',
                         localized_name : "UMP-45",
                         tag_color: '#4186d8'
                     },
                     weapon_mac10: {
+                        internal_name: 'weapon_mac10',
+                        type: 'csgo_type_smg',
                         localized_name : "MAC-10",
                         tag_color: '#4186d8'
                     },
                     weapon_p90: {
+                        internal_name: 'weapon_p90',
+                        type: 'csgo_type_smg',
                         localized_name : "P90",
                         tag_color: '#4186d8'
                     },
                     weapon_bizon: {
+                        internal_name: 'weapon_bizon',
+                        type: 'csgo_type_smg',
                         localized_name : "PP-野牛",
                         tag_color: '#4186d8'
                     },
                     // 步枪
                     weapon_m4a1: {
+                        internal_name: 'weapon_m4a1',
+                        type: 'csgo_type_rifle',
                         localized_name : "M4A4",
                         tag_color: '#4186d8'
                     },
                     weapon_m4a1_silencer: {
+                        internal_name: 'weapon_m4a1_silencer',
+                        type: 'csgo_type_rifle',
                         localized_name : "M4A1 消音版",
                         tag_color: '#4186d8'
                     },
                     weapon_aug: {
+                        internal_name: 'weapon_aug',
+                        type: 'csgo_type_rifle',
                         localized_name : "AUG",
                         tag_color: '#4186d8'
                     },
                     weapon_famas: {
+                        internal_name: 'weapon_famas',
+                        type: 'csgo_type_rifle',
                         localized_name : "法玛斯",
                         tag_color: '#4186d8'
                     },
                     weapon_galilar: {
+                        internal_name: 'weapon_galilar',
+                        type: 'csgo_type_rifle',
                         localized_name : "加利尔 AR",
                         tag_color: '#4186d8'
                     },
                     weapon_scar20: {
+                        internal_name: 'weapon_scar20',
+                        type: 'csgo_type_rifle',
                         localized_name : "SCAR-20",
                         tag_color: '#4186d8'
                     },
                     weapon_ak47: {
+                        internal_name: 'weapon_ak47',
+                        type: 'csgo_type_rifle',
                         localized_name : "AK-47",
                         tag_color: '#4186d8'
                     },
                     weapon_sg556: {
+                        internal_name: 'weapon_sg556',
+                        type: 'csgo_type_rifle',
                         localized_name : "SG 553",
                         tag_color: '#4186d8'
                     },
                     // 狙击枪
                     weapon_awp: {
+                        internal_name: 'weapon_awp',
+                        type: 'csgo_type_sniperrifle',
                         localized_name : "AWP",
                         tag_color: '#4186d8'
                     },
                     weapon_ssg08: {
+                        internal_name: 'weapon_ssg08',
+                        type: 'csgo_type_sniperrifle',
                         localized_name : "SSG 08",
                         tag_color: '#4186d8'
                     },
                     weapon_g3sg1: {
+                        internal_name: 'weapon_g3sg1',
+                        type: 'csgo_type_sniperrifle',
                         localized_name : "G3SG1",
                         tag_color: '#4186d8'
                     },
                     // 机枪
                     weapon_negev:{
+                        internal_name: 'weapon_negev',
+                        type: 'csgo_type_machinegun',
                         localized_name : "内格夫",
                         tag_color: '#4186d8'
                     },
                     weapon_m249:{
+                        internal_name: 'weapon_m249',
+                        type: 'csgo_type_machinegun',
                         localized_name : "M249",
-                        tag_color: '#4186d8'
-                    },
-
-                    // 音乐盒
-                    csgo_type_musickit: {
-                        localized_name : "音乐盒",
-                        tag_color: '#4186d8',
-                        hidden: true
-                    },
-                    // 探员
-                    agent_team_ct: {
-                        localized_name : "反恐精英",
-                        tag_color: '#4186d8'
-                    },
-                    agent_team_t: {
-                        localized_name : "恐怖分子",
                         tag_color: '#4186d8'
                     },
                     // 手套
                     weapon_moto_gloves: {
+                        internal_name: 'weapon_moto_gloves',
+                        type: 'type_hands',
                         localized_name : "摩托手套",
                         tag_color: '#4186d8'
                     },
                     weapon_driver_gloves: {
+                        internal_name: 'weapon_driver_gloves',
+                        type: 'type_hands',
                         localized_name : "驾驶手套",
                         tag_color: '#4186d8'
                     },
                     weapon_sport_gloves: {
+                        internal_name: 'weapon_sport_gloves',
+                        type: 'type_hands',
                         localized_name : "运动手套",
                         tag_color: '#4186d8'
                     },
                     weapon_hand_wraps: {
+                        internal_name: 'weapon_hand_wraps',
+                        type: 'type_hands',
                         localized_name : "手部束带",
                         tag_color: '#4186d8'
                     },
                     weapon_specialist_gloves: {
+                        internal_name: 'weapon_specialist_gloves',
+                        type: 'type_hands',
                         localized_name : "专业手套",
                         tag_color: '#4186d8'
                     },
-                    // 印花（略）
-
-                    'poorly_drawn': {
-                        localized_name : "poorly_drawn",
+                    // 探员
+                    agent_team_ct: {
+                        internal_name: 'agent_team_ct',
+                        type: 'type_customplayer',
+                        localized_name : "反恐精英",
+                        tag_color: '#4186d8'
+                    },
+                    agent_team_t: {
+                        internal_name: 'agent_team_t',
+                        type: 'type_customplayer',
+                        localized_name : "恐怖分子",
+                        tag_color: '#4186d8'
+                    },
+                    // 音乐盒
+                    csgo_type_musickit: {
+                        internal_name: 'csgo_type_musickit',
+                        type: 'csgo_type_musickit',
+                        localized_name : "音乐盒",
                         tag_color: '#4186d8',
                         hidden: true
                     },
-                    '2019_StarLadder_Berlin_Major': {
-                        localized_name : "2019_StarLadder_Berlin_Major",
-                        tag_color: '#4186d8',
-                        hidden: true
-                    },
-                    'halo_capsule': {
-                        localized_name : "halo_capsule",
-                        tag_color: '#4186d8',
-                        hidden: true
-                    },
-                    'crate_sticker_pack01': {
-                        localized_name : "印花胶囊",
-                        tag_color: '#4186d8',
-                        // hidden: true
-                    },
-                    'crate_sticker_pack_feral_predators_capsule_lootlist': {
-                        localized_name : "crate_sticker_pack_feral_predators_capsule_lootlist",
-                        tag_color: '#4186d8',
-                        hidden: true
-                    },
-                    'crate_sticker_pack_op_riptide_capsule_lootlist': {
-                        localized_name : "crate_sticker_pack_op_riptide_capsule_lootlist",
-                        tag_color: '#4186d8',
-                        hidden: true
-                    },
-                    'crate_sticker_pack_riptide_surfshop_lootlist': {
-                        localized_name : "crate_sticker_pack_riptide_surfshop_lootlist",
-                        tag_color: '#4186d8',
-                        hidden: true
-                    },
-                    'crate_sticker_pack_comm2018_01_capsule_lootlist': {
-                        localized_name : "crate_sticker_pack_comm2018_01_capsule_lootlist",
-                        tag_color: '#4186d8',
-                        hidden: true
-                    },
-                    'crate_sticker_pack_bf2042_capsule_lootlist': {
-                        localized_name : "团队定位胶囊",
-                        tag_color: '#4186d8',
-                        // hidden: true
-                    },
-                    'crate_sticker_pack_bestiary_capsule_lootlist': {
-                        localized_name : "动物寓言胶囊",
-                        tag_color: '#4186d8',
-                        // hidden: true
-                    },
-                    'crate_sticker_pack_team_roles_capsule_lootlist': {
-                        localized_name : "sticker_recoil",
-                        tag_color: '#4186d8',
-                        hidden: true
-                    },
-                    'sticker_tournament14': {
-                        localized_name : "sticker_tournament14",
-                        tag_color: '#4186d8',
-                        hidden: true
-                    },
-                    'sticker_tournament15': {
-                        localized_name : "sticker_tournament15",
-                        tag_color: '#4186d8',
-                        hidden: true
-                    },
-                    'sticker_tournament16': {
-                        localized_name : "sticker_tournament16",
-                        tag_color: '#4186d8',
-                        hidden: true
-                    },
-                    'sticker_tournament17': {
-                        localized_name : "sticker_tournament17",
-                        tag_color: '#4186d8',
-                        hidden: true
-                    },
-                    'sticker_tournament18': {
-                        localized_name : "sticker_tournament18",
-                        tag_color: '#4186d8',
-                        hidden: true
-                    },
-                    'sticker_tournament19': {
-                        localized_name : "sticker_tournament19",
-                        tag_color: '#4186d8',
-                        hidden: true
-                    },
-                    'sticker_tournament20': {
-                        localized_name : "sticker_tournament20",
-                        tag_color: '#4186d8',
-                        hidden: true
-                    },
-                    'sticker_tournament21': {
-                        localized_name : "sticker_tournament21",
-                        tag_color: '#4186d8',
-                        // hidden: true
-                    },
-                    'sticker_tournament22': {
-                        localized_name : "sticker_tournament22",
-                        tag_color: '#4186d8',
-                        hidden: true
-                    },
-                    'shattered_web': {
-                        localized_name : "shattered_web",
-                        tag_color: '#4186d8',
-                        hidden: true
-                    },
-                    'skill_groups_capsule': {
-                        localized_name : "skill_groups_capsule",
-                        tag_color: '#4186d8',
-                        hidden: true
-                    },
-                    'sticker_recoil': {
-                        localized_name : "sticker_recoil",
-                        tag_color: '#4186d8',
-                        hidden: true
-                    },
-                    'sticker_other': {
-                        localized_name : "sticker_other",
+                    // 布章
+                    csgo_tool_patch: {
+                        internal_name: 'csgo_tool_patch',
+                        type: 'csgo_tool_patch',
+                        localized_name : "布章",
                         tag_color: '#4186d8',
                         hidden: true
                     },
                     // 涂鸦
                     csgo_type_spray: {
+                        internal_name: 'csgo_type_spray',
+                        type: 'csgo_type_spray',
                         localized_name : "涂鸦",
                         tag_color: '#4186d8',
                         hidden: true
                     },
-                    csgo_tool_patch: {
-                        localized_name : "布章",
-                        tag_color: '#4186d8',
-                        hidden: true
-                    },
-
+                    // 工具
                     csgo_type_tool: {
+                        internal_name: 'csgo_type_tool',
+                        type: 'csgo_type_tool',
                         localized_name : "工具",
                         tag_color: '#4186d8',
                         hidden: true
                     },
-
+                    // 收藏品
                     csgo_type_collectible: {
+                        internal_name: 'csgo_type_collectible',
+                        type: 'csgo_type_collectible',
                         localized_name : "收藏品",
                         tag_color: '#4186d8',
                         hidden: true
                     },
+                    // 印花
+                    'poorly_drawn': {
+                        internal_name: 'poorly_drawn',
+                        type: 'csgo_tool_sticker',
+                        localized_name : "poorly_drawn",
+                        tag_color: '#4186d8',
+                        hidden: true
+                    },
+                    '2019_StarLadder_Berlin_Major': {
+                        internal_name: '2019_StarLadder_Berlin_Major',
+                        type: 'csgo_tool_sticker',
+                        localized_name : "2019_StarLadder_Berlin_Major",
+                        tag_color: '#4186d8',
+                        hidden: true
+                    },
+                    'halo_capsule': {
+                        internal_name: 'halo_capsule',
+                        type: 'csgo_tool_sticker',
+                        localized_name : "halo_capsule",
+                        tag_color: '#4186d8',
+                        hidden: true
+                    },
+                    'crate_sticker_pack01': {
+                        internal_name: 'crate_sticker_pack01',
+                        type: 'csgo_tool_sticker',
+                        localized_name : "印花胶囊",
+                        tag_color: '#4186d8',
+                        // hidden: true
+                    },
+                    'crate_sticker_pack_feral_predators_capsule_lootlist': {
+                        internal_name: 'crate_sticker_pack_feral_predators_capsule_lootlist',
+                        type: 'csgo_tool_sticker',
+                        localized_name : "crate_sticker_pack_feral_predators_capsule_lootlist",
+                        tag_color: '#4186d8',
+                        hidden: true
+                    },
+                    'crate_sticker_pack_op_riptide_capsule_lootlist': {
+                        internal_name: 'crate_sticker_pack_op_riptide_capsule_lootlist',
+                        type: 'csgo_tool_sticker',
+                        localized_name : "crate_sticker_pack_op_riptide_capsule_lootlist",
+                        tag_color: '#4186d8',
+                        hidden: true
+                    },
+                    'crate_sticker_pack_riptide_surfshop_lootlist': {
+                        internal_name: 'crate_sticker_pack_riptide_surfshop_lootlist',
+                        type: 'csgo_tool_sticker',
+                        localized_name : "crate_sticker_pack_riptide_surfshop_lootlist",
+                        tag_color: '#4186d8',
+                        hidden: true
+                    },
+                    'crate_sticker_pack_comm2018_01_capsule_lootlist': {
+                        internal_name: 'crate_sticker_pack_comm2018_01_capsule_lootlist',
+                        type: 'csgo_tool_sticker',
+                        localized_name : "crate_sticker_pack_comm2018_01_capsule_lootlist",
+                        tag_color: '#4186d8',
+                        hidden: true
+                    },
+                    'crate_sticker_pack_bf2042_capsule_lootlist': {
+                        internal_name: 'crate_sticker_pack_bf2042_capsule_lootlist',
+                        type: 'csgo_tool_sticker',
+                        localized_name : "团队定位胶囊",
+                        tag_color: '#4186d8',
+                        // hidden: true
+                    },
+                    'crate_sticker_pack_bestiary_capsule_lootlist': {
+                        internal_name: 'crate_sticker_pack_bestiary_capsule_lootlist',
+                        type: 'csgo_tool_sticker',
+                        localized_name : "动物寓言胶囊",
+                        tag_color: '#4186d8',
+                        // hidden: true
+                    },
+                    'crate_sticker_pack_team_roles_capsule_lootlist': {
+                        internal_name: 'crate_sticker_pack_team_roles_capsule_lootlist',
+                        type: 'csgo_tool_sticker',
+                        localized_name : "sticker_recoil",
+                        tag_color: '#4186d8',
+                        hidden: true
+                    },
+                    'sticker_tournament14': {
+                        internal_name: 'sticker_tournament14',
+                        type: 'csgo_tool_sticker',
+                        localized_name : "sticker_tournament14",
+                        tag_color: '#4186d8',
+                        hidden: true
+                    },
+                    'sticker_tournament15': {
+                        internal_name: 'sticker_tournament15',
+                        type: 'csgo_tool_sticker',
+                        localized_name : "sticker_tournament15",
+                        tag_color: '#4186d8',
+                        hidden: true
+                    },
+                    'sticker_tournament16': {
+                        internal_name: 'sticker_tournament16',
+                        type: 'csgo_tool_sticker',
+                        localized_name : "sticker_tournament16",
+                        tag_color: '#4186d8',
+                        hidden: true
+                    },
+                    'sticker_tournament17': {
+                        internal_name: 'sticker_tournament17',
+                        type: 'csgo_tool_sticker',
+                        localized_name : "sticker_tournament17",
+                        tag_color: '#4186d8',
+                        hidden: true
+                    },
+                    'sticker_tournament18': {
+                        internal_name: 'sticker_tournament18',
+                        type: 'csgo_tool_sticker',
+                        localized_name : "sticker_tournament18",
+                        tag_color: '#4186d8',
+                        hidden: true
+                    },
+                    'sticker_tournament19': {
+                        internal_name: 'sticker_tournament19',
+                        type: 'csgo_tool_sticker',
+                        localized_name : "sticker_tournament19",
+                        tag_color: '#4186d8',
+                        hidden: true
+                    },
+                    'sticker_tournament20': {
+                        internal_name: 'sticker_tournament20',
+                        type: 'csgo_tool_sticker',
+                        localized_name : "sticker_tournament20",
+                        tag_color: '#4186d8',
+                        hidden: true
+                    },
+                    'sticker_tournament21': {
+                        internal_name: 'sticker_tournament21',
+                        type: 'csgo_tool_sticker',
+                        localized_name : "sticker_tournament21",
+                        tag_color: '#4186d8',
+                        // hidden: true
+                    },
+                    'sticker_tournament22': {
+                        internal_name: 'sticker_tournament22',
+                        type: 'csgo_tool_sticker',
+                        localized_name : "sticker_tournament22",
+                        tag_color: '#4186d8',
+                        hidden: true
+                    },
+                    'shattered_web': {
+                        internal_name: 'shattered_web',
+                        type: 'csgo_tool_sticker',
+                        localized_name : "shattered_web",
+                        tag_color: '#4186d8',
+                        hidden: true
+                    },
+                    'skill_groups_capsule': {
+                        internal_name: 'skill_groups_capsule',
+                        type: 'csgo_tool_sticker',
+                        localized_name : "skill_groups_capsule",
+                        tag_color: '#4186d8',
+                        hidden: true
+                    },
+                    'sticker_recoil': {
+                        internal_name: 'sticker_recoil',
+                        type: 'csgo_tool_sticker',
+                        localized_name : "sticker_recoil",
+                        tag_color: '#4186d8',
+                        hidden: true
+                    },
+                    'sticker_other': {
+                        internal_name: 'sticker_other',
+                        type: 'csgo_tool_sticker',
+                        localized_name : "sticker_other",
+                        tag_color: '#4186d8',
+                        hidden: true
+                    },
+
 
 
                 },
@@ -949,8 +1208,46 @@
         created() {
             this.loadData()
 
+
+
         },
         methods: {
+
+            castEnum(){
+                const options_rarity_type = []
+
+                // 计算options
+
+                const rarity_type = this.enumMap.rarity_type
+                for (let k in rarity_type) {
+                    const item = rarity_type[k]
+                    const option = {
+                        value: k,
+                        label: item.localized_name,
+                        color: item.tag_color,
+                        children: []
+                    }
+                    const rarity = this.enumMap.rarity
+                    for (let k2 in rarity) {
+                        const item2 = rarity[k2]
+                        if (k === item2.rarity_type) {
+                            option.children.push({
+                                value: k2,
+                                label: item2.localized_name,
+                                color: item2.tag_color
+                            })
+                        }
+                    }
+                    options_rarity_type.push(option)
+                }
+            },
+
+            handleSelect(value, keyPathArray) {
+                const key = keyPathArray[0]
+                this.query[key] = value
+                console.log(this.query);
+            },
+
 
             openSell(item){
                 this.loadSellListData(item)

@@ -217,17 +217,16 @@
             某些功能可能需要您登录BUFF平台：<a style="color: #3a8ee6;" href="https://buff.163.com/" target="_blank">BUFF登录</a>
         </div>
         <div style="font-size: 12px;">共发现<span style="color: #eea20e">{{ " " + listDataInfo.total + " " }}</span>种饰品！</div>
-<!--        <div style="font-size: 12px;">steam出售手续费15%、购买手续费5%.</div>
+        <div style="font-size: 12px;">steam出售手续费15%、购买手续费5%.</div>
         <div style="font-size: 12px;">buff交易手续费2.5%、提现手续费1%.</div>
-        <div style="font-size: 12px; color: #cf9236">环亏损是指经过A->B->A过程后因A、B平台抽成导致的总亏损百分比.</div>-->
-        <div style="font-size: 12px; color: #cf9236">筛选暂不可用.</div>
-        <div class="query">
+        <div style="font-size: 12px; color: #cf9236">环亏损是指经过A->B->A过程后因A、B平台抽成导致的总亏损百分比.</div>
+        <div class="query" v-if="false">
             <el-menu mode="horizontal"
                     :default-active="0"
                     class="el-menu-demo"
 
                     @select="handleSelect"
-                    background-color="rgba(27, 27, 25, 0)"
+                    background-color="rgba(27, 27, 25, 0.5)"
                     text-color="#fff"
                     active-text-color="#ffd04b">
                 <el-submenu index="rarity">

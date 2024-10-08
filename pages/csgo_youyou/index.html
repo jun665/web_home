@@ -14,17 +14,20 @@
     <script src="../../cdn/vue-clipboard.js"></script>
     <style type="text/css">
         body {
-            margin: 8px;
+            margin: 5px;
             background-color: #1a181c;
-            padding-top: 152px;
+        }
+
+        .el-tabs--border-card>.el-tabs__content {
+            padding: 0;
+            border-radius: 5px;
+            height: calc(100vh - 50px);
         }
 
         .config {
-            margin: -152px 2px 5px 2px;
             height: 140px;
-            width: calc(100% - 31px);
-            min-width: 1500px;
-            position: fixed;
+            width:  calc(100% - 12px);
+            min-width: 500px;
             padding: 5px;
             background-color: rgba(27, 27, 25);
             background: -webkit-gradient(linear, 38% 3%, 90% 20%,from(#242227), to(#585559));
@@ -39,12 +42,10 @@
             box-shadow: 0 0 3px 0 rgba(214, 145, 95, 0.53), 0 0 3px rgba(216, 102, 40, 0.87);
 
         }
-
         .list_body {
-            position: fixed;
             overflow: scroll;
-            height: calc(100vh - 180px);
-            width: calc(100% - 18px);
+            max-height: calc(100vh - 270px);
+            /*width: calc(100% - 18px);*/
             min-width: 1500px;
             overflow-x: hidden;
             background-color: #1a181c;
@@ -62,8 +63,9 @@
         }
         .list_row:hover {
             border: 0;
-            background: -webkit-gradient(linear, 8% 3%, 90% 20%,from(#19151e), to(#2e2218));
+            background: -webkit-gradient(linear, 8% 3%, 90% 20%,from(#2e1051), to(#12355e));
             box-shadow: 0 0 3px 0 rgba(214, 145, 95, 0.53), 0 0 3px rgba(216, 102, 40, 0.87);
+
         }
 
         .left_0 {
@@ -179,7 +181,6 @@
             font-size: 12px;
         }
 
-
         .el-dialog  {
             border: 1px solid #959595;
             border-radius: 2px;
@@ -190,8 +191,6 @@
         .el-dialog .el-dialog__header, .el-dialog .el-dialog__body {
             background-color: #1a181c;
         }
-
-
         .el_table tr, .el-table__body-wrapper > table > tbody > tr > td {
             background-color: #1a181c !important;
             color: #969696FF;
@@ -203,141 +202,209 @@
             background-color: #9c9b9b !important;
         }
 
+
     </style>
 </head>
 <body>
 <div id="app">
-    <div class="config">
-        <div style="font-size: 12px;">
-            某些功能可能需要您登录悠悠平台：<a style="color: #3a8ee6;" href="https://buff.163.com/" target="_blank">悠悠登录</a>
-            > 临时令牌
-            <el-input  v-model="authorization" placeholder="请输入令牌 Bearer ey..." style="width: 300px;margin-left: 2px;" size="mini"></el-input>
-            <el-button @click="loadData()" type="primary" plain size="mini">令牌访问</el-button>
+
+    <el-tabs type="border-card">
+        <div class="config">
+            <div style="font-size: 12px;">
+                某些功能可能需要您登录悠悠平台：<a style="color: #3a8ee6;" href="https://buff.163.com/" target="_blank">悠悠登录</a>
+                > 临时令牌
+                <el-input  v-model="authorization" placeholder="请输入令牌 Bearer ey..." style="width: 300px;margin-left: 2px;" size="mini"></el-input>
+                <el-button @click="loadData()" type="primary" plain size="mini">令牌访问</el-button>
+                <el-input placeholder="请输入内容进行搜索" v-model="query.search" class="input-with-select" size="mini" style="width: 200px;">
+                    <el-button slot="append" icon="el-icon-search" @click="loadData()"></el-button>
+                </el-input>
+            </div>
+            ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+            <div style="font-size: 12px;">steam出售手续费15%、购买手续费5%. | 悠悠交易手续费1%、提现手续费1%.</div>
+            <div style="font-size: 12px; color: #cf9236">环亏损是指经过A->B->A过程后因A、B平台抽成导致的总亏损百分比.</div>
         </div>
-        ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-        <div style="font-size: 12px;">共发现<span style="color: #eea20e">{{ " " + listDataInfo.total + " " }}</span>种饰品！</div>
-        <div style="font-size: 12px;">steam出售手续费15%、购买手续费5%.</div>
-        <div style="font-size: 12px;">悠悠交易手续费1%、提现手续费1%.</div>
-        <div style="font-size: 12px; color: #cf9236">环亏损是指经过A->B->A过程后因A、B平台抽成导致的总亏损百分比.</div>
-        <el-input placeholder="请输入内容进行搜索" v-model="query.search" class="input-with-select" size="mini" style="width: 200px;">
-            <el-button slot="append" icon="el-icon-search" @click="loadDataSearch()"></el-button>
-        </el-input>
-        <div class="query" v-if="false">
-            <!--<el-menu mode="horizontal"
-                    :default-active="0"
-                    class="el-menu-demo"
-
-                    @select="handleSelect"
-                    background-color="rgba(27, 27, 25, 0.5)"
-                    text-color="#fff"
-                    active-text-color="#ffd04b">
-                <el-submenu index="rarity">
-                    <template slot="title">品质</template>
-                    <el-submenu v-for="(item, key) in enumMap.rarity_type" :index="key">
-                        <template slot="title"><span :style="`color: ${item.tag_color};`">{{item.localized_name}}</span></template>
-                        <el-menu-item v-if="key === item2.rarity_type" v-for="(item2, key2) in enumMap.rarity" :index="key2"><span :style="`color: ${item2.tag_color};`">{{item2.localized_name}}</span></el-menu-item>
-                    </el-submenu>
-                </el-submenu>
-                <el-submenu index="quality">
-                    <template slot="title">类别</template>
-                    <el-menu-item v-for="(item, key) in enumMap.quality" :index="key"><span :style="`color: ${item.tag_color};`">{{item.localized_name}}</span></el-menu-item>
-                </el-submenu>
-                <el-submenu index="exterior">
-                    <template slot="title">外观</template>
-                    <el-menu-item v-for="(item, key) in enumMap.exterior" :index="key"><span :style="`color: ${item.tag_color};`">{{item.localized_name}}</span></el-menu-item>
-                </el-submenu>
-                <el-submenu index="category">
-                    <template slot="title">类型</template>
-                    <el-submenu v-for="(item, key) in enumMap.type" :index="key">
-                        <template slot="title"><span :style="`color: ${item.tag_color};`">{{item.localized_name}}</span></template>
-                        <el-menu-item v-if="key === item2.type" v-for="(item2, key2) in enumMap.category" :index="key2"><span :style="`color: ${item2.tag_color};`">{{item2.localized_name}}</span></el-menu-item>
-                    </el-submenu>
-                </el-submenu>
-            </el-menu>-->
-        </div>
-    </div>
-    <div class="list_body">
-        <el-row class="list_row" v-for="(item, index) in listData" :key="index">
-            <div class="left_0">
-                <div class="item_icon" >
-                    <span class="item_icon_tag" v-if="item.tag_exists" :style="`background: ${item.tag_bg};`">{{item.tag_name}}</span>
-                    <el-image @click="openSell(item)" class="item_icon_img" :style="`box-shadow: 0 2px 0 0 ${item.rarity_color};`" :src="item.icon_url" :fit="item.name"></el-image>
-                    <div class="item_icon_price">
-                        <!-- 标签列表 -->
-                        <div class="tags" >
-                            <span v-if="!tagItem.hidden" class="tag_item" v-for="(tagItem, tagIndex) in item.tagList" :key="tagIndex" :style="`color: ${tagItem.tag_bg}; border: 1px solid ${tagItem.tag_bg};`">{{tagItem.tag_name}}</span>
-                        </div>
-                        <!-- 网易BUFF售价 -->
-                        <div class="item_icon_price_item">
-                            <div class="item_icon_price_item_svg">
-                                <svg width="16" height="16" t="1728198128240" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="16528" >
-                                    <path fill="rgb(204, 71, 54)" p-id="16529" d="M340.448 701.152c-30.208 9.952-20.128 29.856-20.128 29.856 20.128 79.648 261.696-109.504 271.776-139.392 10.048-29.856-20.128-19.904-20.128-19.904-140.864 119.424-231.424 129.44-231.52 129.44zM512 1024C229.216 1024 0 794.784 0 512S229.216 0 512 0s512 229.216 512 512-229.216 512-512 512z m-21.856-549.6c41.056-2.208 81.824-2.24 81.824-2.24 90.592 9.952 90.592-59.744 90.592-59.744v-49.76c0-39.808-30.208-89.6-120.768-89.6-90.592 0-110.72 9.952-110.72 9.952-40.256 9.952-30.208 29.856-30.208 29.856 10.08 19.904 40.256 9.952 40.256 9.952 60.384-19.904 120.768-9.952 120.768-9.952 60.384 0 60.384 49.792 60.384 49.792v49.76c0 29.856-30.208 29.856-30.208 29.856H420.96c-30.208 0-30.208-29.856-30.208-29.856V342.72c0-19.904-20.128-19.904-20.128-19.904-20.128 0-20.128 19.904-20.128 19.904v89.6c10.08 49.792 70.464 49.792 70.464 49.792 6.816-1.696 15.712-3.104 25.728-4.256-12.736 14.912-53.056 54.016-126.368 54.016 0 0-30.208 0-30.208 19.904 0 0 0 19.904 30.208 19.904 29.888 0.064 128.8-19.552 169.824-97.28z m-137.6 222.752l-4.192 1.376a134.682 134.682 0 0 0 4.192-1.376zM541.76 482.144s-20.128 0-20.128 19.904c0 0 0.064 4.64 2.304 9.44a26.56 26.56 0 0 0-2.304 0.512C390.784 631.456 320.32 621.504 320.32 621.504c-20.128 0-20.128 19.904-20.128 19.904 10.08 79.648 231.488-79.648 241.568-109.504a30.336 30.336 0 0 0 1.824-9.92c10.816 0.288 72.256 3.552 108.896 39.776 40.256 39.808-10.08 129.408-80.512 139.392 0 0-30.208 0-40.256-19.904 0 0-20.128-9.952-20.128 9.952 0 0 0 59.744 50.336 59.744S702.848 711.136 712.896 601.6c-0.032 0-0.032-119.456-171.136-119.456z m10.048-89.6s30.208 0 30.208-19.904c0 0 0-19.904-30.208-19.904h-100.64s-30.208 0-30.208 19.904c0 0 0 19.904 30.208 19.904h100.64z" ></path>
-                                </svg>
-                            </div>
-                            <div class="item_icon_price_item_val"> {{ item.price_buff }}元</div>
-                        </div> <br>
-                        <!-- STEAM市场售价 -->
-                        <div class="item_icon_price_item">
-                            <div class="item_icon_price_item_svg">
-                                <svg  width="16" height="16" @click="openURL(item.steam_market_url)" t="1728075951550" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1482">
-                                    <path fill="#1245b6" p-id="1483" d="M510.872 0.00004A511.738935 511.738935 0 0 0 0.578065 470.68598l274.473965 113.377986a144.332982 144.332982 0 0 1 89.621989-24.903997L486.810003 382.552991v-2.615999a193.084975 193.084975 0 1 1 193.049976 193.095975h-4.48L501.388001 697.214951c0 2.275 0.193 4.549999 0.193 6.823a144.799982 144.799982 0 0 1-286.766963 28.543996L18.227063 651.159957A511.965935 511.965935 0 1 0 510.792 0.00004h0.069zM321.404024 776.591941L258.540032 750.549945a108.772986 108.772986 0 1 0 59.599993-148.745981l64.967991 26.837996a80.09299 80.09299 0 1 1-61.646992 147.835981v0.114z m487.139938-396.767949A128.661984 128.661984 0 1 0 679.882979 508.439975a128.843984 128.843984 0 0 0 128.662983-128.616983z m-225.061971-0.228a96.661988 96.661988 0 1 1 96.661988 96.661988 96.433988 96.433988 0 0 1-96.661988-96.661988z" ></path>
-                                </svg>
-                            </div>
-                            <div class="item_icon_price_item_val"> {{ item.price_steam }}元</div>
-                            <span :style="`color: ${item.price_difference < 0 ? '#ee5555' : '#1DBF62'};`" style="font-size: 12px;float: left">（{{ (item.S_ADD_V > 0 ? '+' : '') + item.S_ADD_V }}元）</span>
-                            <!-- 涨跌% -->
-                            <div v-if="item.price_difference !== 0">
-
-                                <div class="item_icon_price_item_change_svg" >
-                                    <svg v-if="item.price_difference > 0" width="16" height="16" t="1728210231346" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="54580" >
-                                        <path fill="#84f98b" opacity="0.5" p-id="54581"d="M512.0256 0L170.6752 358.4h682.6496L512.0256 0z" ></path>
-                                        <path fill="#1DBF62" p-id="54582" d="M512.0256 1024l153.6-494.9504h187.6992l-341.2992-358.4-341.3504 358.4h187.7504l153.6 494.9504z" ></path>
-                                    </svg>
-                                    <svg v-if="item.price_difference < 0" width="16" height="16" t="1728209054029" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="23460" data-spm-anchor-id="a313x.search_index.0.i8.79713a81hkkUQB" >
-                                        <path fill="#ec8383"class="selected"  p-id="23461" d="M512 1024l341.333333-358.4H170.666667z"  data-spm-anchor-id="a313x.search_index.0.i9.79713a81hkkUQB" ></path>
-                                        <path fill="#ee5555"class="selected"  p-id="23462" d="M665.6 494.933333L512 0 358.4 494.933333H170.666667L512 853.333333l341.333333-358.4H665.6z"  data-spm-anchor-id="a313x.search_index.0.i10.79713a81hkkUQB" ></path>
-                                    </svg>
-
+        <el-tab-pane label="饰品市场">
+            <span slot="label"><i class="el-icon-date"></i>饰品市场</span>
+            <div class="list_body">
+                <el-row class="list_row" v-for="(item, index) in listData" :key="index" :style="item.price_steam == 0.2 ? 'background: -webkit-gradient(linear, 8% 3%, 90% 20%,from(#322237), to(#4a1510));' : ''">
+                    <div class="left_0">
+                        <div class="item_icon" >
+                            <span class="item_icon_tag" v-if="item.tag_exists" :style="`background: ${item.tag_bg};`">{{item.tag_name}}</span>
+                            <el-image @click="openSell(item)" class="item_icon_img" :style="`box-shadow: 0 2px 0 0 ${item.rarity_color};`" :src="item.icon_url" :fit="item.name"></el-image>
+                            <div class="item_icon_price">
+                                <!-- 标签列表 -->
+                                <div class="tags" >
+                                    <span v-if="!tagItem.hidden" class="tag_item" v-for="(tagItem, tagIndex) in item.tagList" :key="tagIndex" :style="`color: ${tagItem.tag_bg}; border: 1px solid ${tagItem.tag_bg};`">{{tagItem.tag_name}}</span>
                                 </div>
-                                <div class="item_icon_price_item_change_val" :style="`color: ${item.price_difference < 0 ? '#ee5555' : '#1DBF62'};`"> {{item.S_ADD_R}}% </div>
+                                <!-- 三方平台售价 -->
+                                <div class="item_icon_price_item">
+                                    <div class="item_icon_price_item_svg">
+                                        <svg t="1728385313629" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="27359" width="16" height="16"><path d="M512 512m-447.93 0a447.93 447.93 0 1 0 895.86 0 447.93 447.93 0 1 0-895.86 0Z" fill="#69B452" p-id="27360"></path><path d="M739.22 459.48H283.8a6 6 0 0 0-6 6.07v287.19a6 6 0 0 0 6 6.07h455.42a6 6 0 0 0 6-6.07V465.55a6 6 0 0 0-6-6.07z m-49.91 135.63a6 6 0 0 1-6 6H339.69a6 6 0 0 1-6-6v-83a6 6 0 0 1 6-6h343.64a6 6 0 0 1 6 6z" fill="#D1F0C7" p-id="27361"></path><path d="M729.4 265.19H301.08a6 6 0 0 0-5.58 3.81c-9.5 24.73-61.64 145.2-61.64 182.38a69.53 69.53 0 0 0 139.07 0c0-0.94 0-1.87-0.06-2.8h0.23a69.71 69.71 0 0 0-0.14 4.35A69.53 69.53 0 1 0 512 453c0-1.46-0.05-2.91-0.14-4.35h0.28A69.71 69.71 0 0 0 512 453a69.53 69.53 0 1 0 139.07 0c0-1.46-0.05-2.91-0.14-4.35h0.23q-0.09 1.77-0.09 3.57a69.53 69.53 0 0 0 139.07 0c0-20.18-46.43-157.5-55.09-182.94a6 6 0 0 0-5.65-4.09z" fill="#FFFFFF" p-id="27362"></path></svg>
+                                    </div>
+                                    <div class="item_icon_price_item_val"> {{ item.price_buff }}元</div>
+                                </div> <br>
+                                <!-- STEAM市场售价 -->
+                                <div class="item_icon_price_item">
+                                    <div class="item_icon_price_item_svg">
+                                        <svg  width="16" height="16" @click="openURL(item.steam_market_url)" t="1728075951550" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1482">
+                                            <path fill="#1245b6" p-id="1483" d="M510.872 0.00004A511.738935 511.738935 0 0 0 0.578065 470.68598l274.473965 113.377986a144.332982 144.332982 0 0 1 89.621989-24.903997L486.810003 382.552991v-2.615999a193.084975 193.084975 0 1 1 193.049976 193.095975h-4.48L501.388001 697.214951c0 2.275 0.193 4.549999 0.193 6.823a144.799982 144.799982 0 0 1-286.766963 28.543996L18.227063 651.159957A511.965935 511.965935 0 1 0 510.792 0.00004h0.069zM321.404024 776.591941L258.540032 750.549945a108.772986 108.772986 0 1 0 59.599993-148.745981l64.967991 26.837996a80.09299 80.09299 0 1 1-61.646992 147.835981v0.114z m487.139938-396.767949A128.661984 128.661984 0 1 0 679.882979 508.439975a128.843984 128.843984 0 0 0 128.662983-128.616983z m-225.061971-0.228a96.661988 96.661988 0 1 1 96.661988 96.661988 96.433988 96.433988 0 0 1-96.661988-96.661988z" ></path>
+                                        </svg>
+                                    </div>
+                                    <div class="item_icon_price_item_val" :style="item.price_steam == 0.2 ? 'color: red;' : ''"> {{ item.price_steam }}元</div>
+                                    <span :style="`color: ${item.price_difference < 0 ? '#ee5555' : '#1DBF62'};`" style="font-size: 12px;float: left">（{{ (item.S_ADD_V > 0 ? '+' : '') + item.S_ADD_V }}元）</span>
+                                    <!-- 涨跌% -->
+                                    <div v-if="item.price_difference !== 0">
+
+                                        <div class="item_icon_price_item_change_svg" >
+                                            <svg v-if="item.price_difference > 0" width="16" height="16" t="1728210231346" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="54580" >
+                                                <path fill="#84f98b" opacity="0.5" p-id="54581"d="M512.0256 0L170.6752 358.4h682.6496L512.0256 0z" ></path>
+                                                <path fill="#1DBF62" p-id="54582" d="M512.0256 1024l153.6-494.9504h187.6992l-341.2992-358.4-341.3504 358.4h187.7504l153.6 494.9504z" ></path>
+                                            </svg>
+                                            <svg v-if="item.price_difference < 0" width="16" height="16" t="1728209054029" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="23460" data-spm-anchor-id="a313x.search_index.0.i8.79713a81hkkUQB" >
+                                                <path fill="#ec8383"class="selected"  p-id="23461" d="M512 1024l341.333333-358.4H170.666667z"  data-spm-anchor-id="a313x.search_index.0.i9.79713a81hkkUQB" ></path>
+                                                <path fill="#ee5555"class="selected"  p-id="23462" d="M665.6 494.933333L512 0 358.4 494.933333H170.666667L512 853.333333l341.333333-358.4H665.6z"  data-spm-anchor-id="a313x.search_index.0.i10.79713a81hkkUQB" ></path>
+                                            </svg>
+
+                                        </div>
+                                        <div class="item_icon_price_item_change_val" :style="`color: ${ (item.price_difference < 0 || item.price_steam == 0.2) ? '#ee5555' : '#1DBF62'};`"> {{item.S_ADD_R}}% </div>
+                                    </div>
+                                </div> <br>
+                                <div class="item_icon_price_count">{{ item.sell_num }}件在售</div> <br>
                             </div>
-                        </div> <br>
-                        <div class="item_icon_price_count">{{ item.sell_num }}件在售</div> <br>
+                        </div>
+                        <span class="item_name">{{ item.name }} </span>
                     </div>
-                </div>
-                <span class="item_name">{{ item.name }} </span>
-            </div>
-            <div class="left_i">
-                <div class="i_title">悠悠交易市场</div>
-                <span class="i_name">买入</span>：<span class="i_value">{{item.buff_buy_price.toFixed(2)}}元</span><br>
-                <span class="i_name">卖出</span>：<span class="i_value">{{item.buff_sell_price.toFixed(2)}}元</span><br>
-                <span class="i_name">提现</span>：<span class="i_value">{{item.buff_sell_price2.toFixed(2)}}元</span><br>
+                    <div class="left_i">
+                        <div class="i_title">悠悠交易市场</div>
+                        <span class="i_name">买入</span>：<span class="i_value">{{item.buff_buy_price.toFixed(2)}}元</span><br>
+                        <span class="i_name">卖出</span>：<span class="i_value">{{item.buff_sell_price.toFixed(2)}}元</span><br>
+                        <span class="i_name">提现</span>：<span class="i_value">{{item.buff_sell_price2.toFixed(2)}}元</span><br>
+
+                    </div>
+                    <div class="left_i">
+                        <div class="i_title">STEAM交易市场</div>
+                        <span class="i_name">买入</span>：<span class="i_value">{{item.steam_buy_price.toFixed(2)}}元</span><br>
+                        <span class="i_name">卖出</span>：<span class="i_value">{{item.steam_sell_price.toFixed(2)}}元</span><br>
+                        <span class="i_name">提现</span>：--<br>
+
+                    </div>
+                    <div class="left_i">
+                        <div class="i_title">悠悠转STEAM金额</div>
+                        <span class="i_name">净利润</span>：<span class="i_value" :style="`color: ${item.buff_buy_steam_sell_value < 0 ? '#ee5555' : '#1DBF62'};`">{{item.buff_buy_steam_sell_value.toFixed(2)}}元</span><br>
+                        <span class="i_name">净利率</span>：<span class="i_value" :style="`color: ${item.buff_buy_steam_sell_rate < 0 ? '#ee5555' : '#1DBF62'};`">{{item.buff_buy_steam_sell_rate.toFixed(2)}}%</span><br>
+                        <span class="i_name">环亏损</span>：<span class="i_value" style="color: #9c9b9b;">{{item.buff_buy_steam_sell_rate2.toFixed(2)}}%</span><br>
+                        <span class="i_name">抽成额</span>：<span class="i_value" style="color: #ae7a7a;">U≈{{item.buff_buy_steam_sell_buff_rake}}元、S≈{{item.buff_buy_steam_sell_steam_rake.toFixed(2)}}元</span><br>
+
+                    </div>
+                    <div class="left_i">
+                        <div class="i_title">STEAM转悠悠金额</div>
+                        <span class="i_name">净利润</span>：<span class="i_value" :style="`color: ${item.steam_buy_buff_sell_value < 0 ? '#ee5555' : '#1DBF62'};`">{{item.steam_buy_buff_sell_value.toFixed(2)}}元</span><br>
+                        <span class="i_name">净利率</span>：<span class="i_value" :style="`color: ${item.steam_buy_buff_sell_rate < 0 ? '#ee5555' : '#1DBF62'};`">{{item.steam_buy_buff_sell_rate.toFixed(2)}}%</span><br>
+                        <span class="i_name">环亏损</span>：<span class="i_value" style="color: #9c9b9b;">{{item.steam_buy_buff_sell_rate2.toFixed(2)}}%</span><br>
+                        <span class="i_name">抽成额</span>：<span class="i_value" style="color: #ae7a7a;">U≈{{item.steam_buy_buff_sell_buff_rake.toFixed(2)}}元、S≈{{item.steam_buy_buff_sell_steam_rake.toFixed(2)}}元</span><br>
+                    </div>
+                </el-row>
 
             </div>
-            <div class="left_i">
-                <div class="i_title">STEAM交易市场</div>
-                <span class="i_name">买入</span>：<span class="i_value">{{item.steam_buy_price.toFixed(2)}}元</span><br>
-                <span class="i_name">卖出</span>：<span class="i_value">{{item.steam_sell_price.toFixed(2)}}元</span><br>
-                <span class="i_name">提现</span>：--<br>
+            <el-pagination v-if="authorization" background layout="total, sizes, prev, pager, next, jumper"  :page-sizes="[10, 20, 50, 100]" style="margin: 5px 0 10px 0;"
+                           :total="listDataInfo.total"
+                           @size-change="handleSizeChange"
+                           @current-change="handleCurrentChange"
+                           :current-page="query.page_num"
+            />
+        </el-tab-pane>
+        <el-tab-pane label="我的库存">
+            <div class="list_body">
+                <el-row class="list_row" v-for="(item, index) in listData" :key="index" :style="item.price_steam == 0.2 ? 'background: -webkit-gradient(linear, 8% 3%, 90% 20%,from(#322237), to(#4a1510));' : ''">
+                    <div class="left_0">
+                        <div class="item_icon" >
+                            <span class="item_icon_tag" v-if="item.tag_exists" :style="`background: ${item.tag_bg};`">{{item.tag_name}}</span>
+                            <el-image @click="openSell(item)" class="item_icon_img" :style="`box-shadow: 0 2px 0 0 ${item.rarity_color};`" :src="item.icon_url" :fit="item.name"></el-image>
+                            <div class="item_icon_price">
+                                <!-- 标签列表 -->
+                                <div class="tags" >
+                                    <span v-if="!tagItem.hidden" class="tag_item" v-for="(tagItem, tagIndex) in item.tagList" :key="tagIndex" :style="`color: ${tagItem.tag_bg}; border: 1px solid ${tagItem.tag_bg};`">{{tagItem.tag_name}}</span>
+                                </div>
+                                <!-- 三方平台售价 -->
+                                <div class="item_icon_price_item">
+                                    <div class="item_icon_price_item_svg">
+                                        <svg t="1728385313629" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="27359" width="16" height="16"><path d="M512 512m-447.93 0a447.93 447.93 0 1 0 895.86 0 447.93 447.93 0 1 0-895.86 0Z" fill="#69B452" p-id="27360"></path><path d="M739.22 459.48H283.8a6 6 0 0 0-6 6.07v287.19a6 6 0 0 0 6 6.07h455.42a6 6 0 0 0 6-6.07V465.55a6 6 0 0 0-6-6.07z m-49.91 135.63a6 6 0 0 1-6 6H339.69a6 6 0 0 1-6-6v-83a6 6 0 0 1 6-6h343.64a6 6 0 0 1 6 6z" fill="#D1F0C7" p-id="27361"></path><path d="M729.4 265.19H301.08a6 6 0 0 0-5.58 3.81c-9.5 24.73-61.64 145.2-61.64 182.38a69.53 69.53 0 0 0 139.07 0c0-0.94 0-1.87-0.06-2.8h0.23a69.71 69.71 0 0 0-0.14 4.35A69.53 69.53 0 1 0 512 453c0-1.46-0.05-2.91-0.14-4.35h0.28A69.71 69.71 0 0 0 512 453a69.53 69.53 0 1 0 139.07 0c0-1.46-0.05-2.91-0.14-4.35h0.23q-0.09 1.77-0.09 3.57a69.53 69.53 0 0 0 139.07 0c0-20.18-46.43-157.5-55.09-182.94a6 6 0 0 0-5.65-4.09z" fill="#FFFFFF" p-id="27362"></path></svg>
+                                    </div>
+                                    <div class="item_icon_price_item_val"> {{ item.price_buff }}元</div>
+                                </div> <br>
+                                <!-- STEAM市场售价 -->
+                                <div class="item_icon_price_item">
+                                    <div class="item_icon_price_item_svg">
+                                        <svg  width="16" height="16" @click="openURL(item.steam_market_url)" t="1728075951550" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1482">
+                                            <path fill="#1245b6" p-id="1483" d="M510.872 0.00004A511.738935 511.738935 0 0 0 0.578065 470.68598l274.473965 113.377986a144.332982 144.332982 0 0 1 89.621989-24.903997L486.810003 382.552991v-2.615999a193.084975 193.084975 0 1 1 193.049976 193.095975h-4.48L501.388001 697.214951c0 2.275 0.193 4.549999 0.193 6.823a144.799982 144.799982 0 0 1-286.766963 28.543996L18.227063 651.159957A511.965935 511.965935 0 1 0 510.792 0.00004h0.069zM321.404024 776.591941L258.540032 750.549945a108.772986 108.772986 0 1 0 59.599993-148.745981l64.967991 26.837996a80.09299 80.09299 0 1 1-61.646992 147.835981v0.114z m487.139938-396.767949A128.661984 128.661984 0 1 0 679.882979 508.439975a128.843984 128.843984 0 0 0 128.662983-128.616983z m-225.061971-0.228a96.661988 96.661988 0 1 1 96.661988 96.661988 96.433988 96.433988 0 0 1-96.661988-96.661988z" ></path>
+                                        </svg>
+                                    </div>
+                                    <div class="item_icon_price_item_val" :style="item.price_steam == 0.2 ? 'color: red;' : ''"> {{ item.price_steam }}元</div>
+                                    <span :style="`color: ${item.price_difference < 0 ? '#ee5555' : '#1DBF62'};`" style="font-size: 12px;float: left">（{{ (item.S_ADD_V > 0 ? '+' : '') + item.S_ADD_V }}元）</span>
+                                    <!-- 涨跌% -->
+                                    <div v-if="item.price_difference !== 0">
 
-            </div>
-            <div class="left_i">
-                <div class="i_title">悠悠转STEAM金额</div>
-                <span class="i_name">净利润</span>：<span class="i_value" :style="`color: ${item.buff_buy_steam_sell_value < 0 ? '#ee5555' : '#1DBF62'};`">{{item.buff_buy_steam_sell_value.toFixed(2)}}元</span><br>
-                <span class="i_name">净利率</span>：<span class="i_value" :style="`color: ${item.buff_buy_steam_sell_rate < 0 ? '#ee5555' : '#1DBF62'};`">{{item.buff_buy_steam_sell_rate.toFixed(2)}}%</span><br>
-                <span class="i_name">环亏损</span>：<span class="i_value" style="color: #9c9b9b;">{{item.buff_buy_steam_sell_rate2.toFixed(2)}}%</span><br>
-                <span class="i_name">抽成额</span>：<span class="i_value" style="color: #ae7a7a;">U≈{{item.buff_buy_steam_sell_buff_rake}}元、S≈{{item.buff_buy_steam_sell_steam_rake.toFixed(2)}}元</span><br>
+                                        <div class="item_icon_price_item_change_svg" >
+                                            <svg v-if="item.price_difference > 0" width="16" height="16" t="1728210231346" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="54580" >
+                                                <path fill="#84f98b" opacity="0.5" p-id="54581"d="M512.0256 0L170.6752 358.4h682.6496L512.0256 0z" ></path>
+                                                <path fill="#1DBF62" p-id="54582" d="M512.0256 1024l153.6-494.9504h187.6992l-341.2992-358.4-341.3504 358.4h187.7504l153.6 494.9504z" ></path>
+                                            </svg>
+                                            <svg v-if="item.price_difference < 0" width="16" height="16" t="1728209054029" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="23460" data-spm-anchor-id="a313x.search_index.0.i8.79713a81hkkUQB" >
+                                                <path fill="#ec8383"class="selected"  p-id="23461" d="M512 1024l341.333333-358.4H170.666667z"  data-spm-anchor-id="a313x.search_index.0.i9.79713a81hkkUQB" ></path>
+                                                <path fill="#ee5555"class="selected"  p-id="23462" d="M665.6 494.933333L512 0 358.4 494.933333H170.666667L512 853.333333l341.333333-358.4H665.6z"  data-spm-anchor-id="a313x.search_index.0.i10.79713a81hkkUQB" ></path>
+                                            </svg>
 
+                                        </div>
+                                        <div class="item_icon_price_item_change_val" :style="`color: ${ (item.price_difference < 0 || item.price_steam == 0.2) ? '#ee5555' : '#1DBF62'};`"> {{item.S_ADD_R}}% </div>
+                                    </div>
+                                </div> <br>
+                                <div class="item_icon_price_count">{{ item.sell_num }}件在售</div> <br>
+                            </div>
+                        </div>
+                        <span class="item_name">{{ item.name }} </span>
+                    </div>
+                    <div class="left_i">
+                        <div class="i_title">悠悠交易市场</div>
+                        <span class="i_name">买入</span>：<span class="i_value">{{item.buff_buy_price.toFixed(2)}}元</span><br>
+                        <span class="i_name">卖出</span>：<span class="i_value">{{item.buff_sell_price.toFixed(2)}}元</span><br>
+                        <span class="i_name">提现</span>：<span class="i_value">{{item.buff_sell_price2.toFixed(2)}}元</span><br>
+
+                    </div>
+                    <div class="left_i">
+                        <div class="i_title">STEAM交易市场</div>
+                        <span class="i_name">买入</span>：<span class="i_value">{{item.steam_buy_price.toFixed(2)}}元</span><br>
+                        <span class="i_name">卖出</span>：<span class="i_value">{{item.steam_sell_price.toFixed(2)}}元</span><br>
+                        <span class="i_name">提现</span>：--<br>
+
+                    </div>
+                    <div class="left_i">
+                        <div class="i_title">悠悠转STEAM金额</div>
+                        <span class="i_name">净利润</span>：<span class="i_value" :style="`color: ${item.buff_buy_steam_sell_value < 0 ? '#ee5555' : '#1DBF62'};`">{{item.buff_buy_steam_sell_value.toFixed(2)}}元</span><br>
+                        <span class="i_name">净利率</span>：<span class="i_value" :style="`color: ${item.buff_buy_steam_sell_rate < 0 ? '#ee5555' : '#1DBF62'};`">{{item.buff_buy_steam_sell_rate.toFixed(2)}}%</span><br>
+                        <span class="i_name">环亏损</span>：<span class="i_value" style="color: #9c9b9b;">{{item.buff_buy_steam_sell_rate2.toFixed(2)}}%</span><br>
+                        <span class="i_name">抽成额</span>：<span class="i_value" style="color: #ae7a7a;">U≈{{item.buff_buy_steam_sell_buff_rake}}元、S≈{{item.buff_buy_steam_sell_steam_rake.toFixed(2)}}元</span><br>
+
+                    </div>
+                    <div class="left_i">
+                        <div class="i_title">STEAM转悠悠金额</div>
+                        <span class="i_name">净利润</span>：<span class="i_value" :style="`color: ${item.steam_buy_buff_sell_value < 0 ? '#ee5555' : '#1DBF62'};`">{{item.steam_buy_buff_sell_value.toFixed(2)}}元</span><br>
+                        <span class="i_name">净利率</span>：<span class="i_value" :style="`color: ${item.steam_buy_buff_sell_rate < 0 ? '#ee5555' : '#1DBF62'};`">{{item.steam_buy_buff_sell_rate.toFixed(2)}}%</span><br>
+                        <span class="i_name">环亏损</span>：<span class="i_value" style="color: #9c9b9b;">{{item.steam_buy_buff_sell_rate2.toFixed(2)}}%</span><br>
+                        <span class="i_name">抽成额</span>：<span class="i_value" style="color: #ae7a7a;">U≈{{item.steam_buy_buff_sell_buff_rake.toFixed(2)}}元、S≈{{item.steam_buy_buff_sell_steam_rake.toFixed(2)}}元</span><br>
+                    </div>
+                </el-row>
+                <el-pagination v-if="authorization" background layout="total, sizes, prev, pager, next, jumper" :total="listDataInfo.total"
+                               :page-sizes="[10, 20, 50, 100]"
+                               @size-change="handleSizeChange"
+                               @current-change="handleCurrentChange"
+                               :current-page="query.page_num"
+                />
             </div>
-            <div class="left_i">
-                <div class="i_title">STEAM转悠悠金额</div>
-                <span class="i_name">净利润</span>：<span class="i_value" :style="`color: ${item.steam_buy_buff_sell_value < 0 ? '#ee5555' : '#1DBF62'};`">{{item.steam_buy_buff_sell_value.toFixed(2)}}元</span><br>
-                <span class="i_name">净利率</span>：<span class="i_value" :style="`color: ${item.steam_buy_buff_sell_rate < 0 ? '#ee5555' : '#1DBF62'};`">{{item.steam_buy_buff_sell_rate.toFixed(2)}}%</span><br>
-                <span class="i_name">环亏损</span>：<span class="i_value" style="color: #9c9b9b;">{{item.steam_buy_buff_sell_rate2.toFixed(2)}}%</span><br>
-                <span class="i_name">抽成额</span>：<span class="i_value" style="color: #ae7a7a;">U≈{{item.steam_buy_buff_sell_buff_rake.toFixed(2)}}元、S≈{{item.steam_buy_buff_sell_steam_rake.toFixed(2)}}元</span><br>
-            </div>
-        </el-row>
-    </div>
+        </el-tab-pane>
+    </el-tabs>
+
+
+
     <!-- 对话框-->
     <el-dialog :title="`${sellItem.name}（${sellItem.sell_num}件）`" :visible.sync="dialogTableVisible" >
         <div style="margin-bottom: 5px; background-color: #1a181c;">
@@ -371,7 +438,7 @@
     new Vue({
         el: "#app",
         data: {
-            authorization: '',
+            authorization: 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiI4ZGI0NDc4MDAzYmE0Yjc4YTZhMTZjMWM3NzM4OWVlMCIsIm5hbWVpZCI6IjY2NjkwMDIiLCJJZCI6IjY2NjkwMDIiLCJ1bmlxdWVfbmFtZSI6IuWwj-eGiueMqzY2NiIsIk5hbWUiOiLlsI_nhornjKs2NjYiLCJ2ZXJzaW9uIjoieUxIIiwibmJmIjoxNzI4Mzg0MDMwLCJleHAiOjE3MjkyNDgwMzAsImlzcyI6InlvdXBpbjg5OC5jb20iLCJhdWQiOiJ1c2VyIn0.GGYRfNlKCnt74UHwLGJRhSUpLLUVjc8YMZgTxWfYdoo',
             // 用户本金
             inputUserPrincipal: 1000,
             listData: [],
@@ -379,12 +446,17 @@
                 total: 0
             },
             query:{
+                page_num: 1,
+                page_size: 10,
+
                 exterior: '',    // 外观：磨损
-                rarity: '',      // 品质：稀有级别
+                rarity: 'Rarity_Ancient_Weapon',      // 品质：稀有级别
                 type: '',        // 枪类
                 category: '',    // 枪型
                 quality: '',     // 特殊品质（暗金）
                 search: '',      // 搜索名称
+
+                sortType: "0",   // 价格排序：0默认、1升序、2降序
             },
 
 
@@ -407,48 +479,70 @@
 
         },
         created() {
-            this.loadDataInit()
+            if (!this.authorization) {
+                this.loadDataInit()
+            } else {
+                this.loadData()
+            }
+
 
 
 
         },
         methods: {
 
-            handleSelect(value, keyPathArray) {
-                const key = keyPathArray[0]
-                this.query[key] = value
-                console.log(this.query);
+            // 分页事件
+            handleCurrentChange(index) {
+                this.query.page_num = index
+                this.loadData()
+            },
+            handleSizeChange(size) {
+                this.query.page_size = size
+                this.loadData()
             },
 
+            gatTagMap(item){
+                let tagMap = {}
+                const exterior = item['Exterior']
+                if (exterior) {
+                    tagMap['exterior'] = {
+                        tag_name: exterior,
+                        tag_bg: "#" + item['ExteriorColor']
+                    }
+                }
 
-            openSell(item){
-                this.loadSellListData(item)
-                this.sellItem = item
-                // 打开列表对话框
-                this.dialogTableVisible = true
+                // 特殊品质（纪念、暗金）
+                const quality = item['Quality']
+                if (quality) {
+                    tagMap['quality'] = {
+                        tag_name: quality,
+                        tag_bg: "#" + item['QualityColor']
+                    }
+                }
+
+                // 品质：稀有级别
+                const rarity = item['Rarity']
+                if (rarity) {
+                    tagMap['rarity'] = {
+                        tag_name: rarity,
+                        tag_bg: "#" + item['RarityColor']
+                    }
+                }
+
+                // 大类
+                const type = item['TypeName']
+                if (type) {
+                    tagMap['type'] = {
+                        tag_name: type,
+                        tag_bg: '#2c5bbf'
+                    }
+                }
+                return tagMap
             },
-            handlerSellListData(items, useItem) {
-                const newList = []
-                // items.forEach(item => {
-                //     newList.push({
-                //         img_src: item.img_src,                                        // 图片
-                //         background_image_url: item.background_image_url,              // 背景图片
-                //         paintwear: item.asset_info.paintwear,                         // 磨损
-                //         price: item.price + '元',                                     // 价格
-                //         lowest_bargain_price: item.lowest_bargain_price + '元',       // 最低特价
-                //         rarity_color: useItem.rarity_color                            // 颜色
-                //     })
-                // })
-                return newList
-            },
-
-
-
-            // 处理排序
             handlerListDataSort(items){
                 // 差价比例排序
                 return items.sort((a, b) =>  b['S_ADD_R'] - a['S_ADD_R'])
-            },
+            },    // 处理排序
             handlerListData(items) {
                 const newList = []
                 items.forEach(item => {
@@ -465,46 +559,16 @@
                     newItem['S_ADD_R'] = (difference / buffPrice * 100).toFixed(2)             // 差价（%）
                     newItem['S_ADD_S'] = difference < 0 ? -1 : difference === 0 ? 0 : 1        // 升降状态
 
-                    let tagMap = {}
+
                     // 磨损标签
                     const exterior = item['Exterior']
                     if (exterior) {
                         newItem['tag_exists'] = true
                         newItem['tag_bg'] =  "#" + item['ExteriorColor']
                         newItem['tag_name'] = exterior
-                        tagMap['exterior'] = {
-                            tag_name: exterior,
-                            tag_bg: "#" + item['ExteriorColor'],
-                            hidden: false
-                        }
                     }
 
-                    // 特殊品质（纪念、暗金）
-                    const quality = item['Quality']
-                    if (quality) {
-                        tagMap['quality'] = {
-                            tag_name: quality,
-                            tag_bg: "#" + item['QualityColor']
-                        }
-                    }
-
-                    // 品质：稀有级别
-                    const rarity = item['Rarity']
-                    if (rarity) {
-                        tagMap['rarity'] = {
-                            tag_name: rarity,
-                            tag_bg: "#" + item['RarityColor']
-                        }
-                    }
-
-                    // 大类
-                    const type = item['TypeName']
-                    if (type) {
-                        tagMap['type'] = {
-                            tag_name: type,
-                            tag_bg: '#2c5bbf'
-                        }
-                    }
+                    let tagMap = this.gatTagMap(item)
                     let tagList = []
                     for (let index in this.showTags) {
                         let tagKey = this.showTags[index]
@@ -512,9 +576,7 @@
                         if (v) {
                             tagList.push(v)
                         }
-
                     }
-                    console.log("tags===", tagList)
                     newItem['tagList'] = tagList
 
                     // 其它
@@ -568,13 +630,11 @@
                 })
                 return newList;
             },
-
-
-            // 无需权限加载
+            // 列表数据（主页无权限）: /api/v2/commodity/template/GetCsGoNewOnShelf
             async loadDataInit() {
                 let that = this
                 const params =  {
-                    Count: 100
+                    Count: this.query.page_size
                 }
                 if (this.query.search) {
                     params.search = this.query.search
@@ -597,7 +657,7 @@
                     that.$message.error(err)
                 })
             },
-            // 加载表格数据
+            // 列表数据（主页有权限）: /api/homepage/es/template/GetCsGoPagedList
             async loadData() {
                 if (!this.authorization) {
                     this.$message.warning('请求输入登录令牌!')
@@ -607,34 +667,44 @@
                 const params =  {
                     "listType": "10",
                     "gameId": "730",
-                    "pageIndex": 1,
-                    "pageSize": 20,
+                    "pageIndex": this.query.page_num,
+                    "pageSize": this.query.page_size,
+                    "rarity": this.query.rarity,
+                    "quality": this.query.quality,
+                    "exterior": this.query.exterior,
+                    "weapon": this.query.category,
                     "sortType": "0",
                     "listSortType": "2",
                     "stickersIsSort": false,
                     "stickers": {}
                 }
                 if (this.query.search) {
-                    params.search = this.query.search
+                    params.keyWords = this.query.search
                 }
                 axios.post("https://api.youpin898.com/api/homepage/es/template/GetCsGoPagedList", params, {
                     headers: {
                         authorization: this.authorization
                     }
                 }).then(await function (res) {
+
                     if (res.data && res.data["Code"] === 0) {
                         that.listDataInfo['total'] = res.data['TotalCount']
                         const itemData = res.data["Data"]
-                        const list = that.handlerListData(itemData)
-                        that.listData = that.handlerListDataSort(list)
+                        if (itemData) {
+                            const list = that.handlerListData(itemData)
+                            that.listData = that.handlerListDataSort(list)
+                        } else {
+                            that.listData = []
+                        }
+
                     } else {
-                        that.$message.error(res.data["Msg"])
+                        that.$message.error(res.data["msg"])
                     }
                 }).catch(err => {
                     that.$message.error(err)
                 })
             },
-            // 搜索数据
+            // 搜索数据（list）    : /api/homepage/search/list
             async loadDataSearch() {
                 if (!this.authorization) {
                     this.$message.warning('请求输入登录令牌!')
@@ -644,8 +714,8 @@
                 const params =  {
                     "listType": "10",
                     "gameId": "730",
-                    "pageIndex": 1,
-                    "pageSize": 20,
+                    "pageIndex": this.query.page_num,
+                    "pageSize": this.query.page_size,
                     "sortType": "0",
                     "listSortType": "2",
                     "stickersIsSort": false,
@@ -659,6 +729,78 @@
                     headers: {
                         authorization: this.authorization
                     }
+                }).then(await function (res) {
+                    if (res.data && res.data["Code"] === 0) {
+                        that.listDataInfo['total'] = res.data['TotalCount']
+                        const itemData = res.data["Data"]
+                        const searchList = itemData['commodityTemplateList']
+                        if (searchList) {
+                            const list = that.handlerListData(searchList)
+                            that.listData = that.handlerListDataSort(list)
+                        }
+
+                    } else {
+                        that.$message.error(res.data["Msg"])
+                    }
+                }).catch(err => {
+                    that.$message.error(err)
+                })
+            },
+
+            // ----------------------------------------------------------------------------------------------------- 列表
+
+            openSell(item){
+                this.loadSellListData(item)
+                this.sellItem = item
+                // 打开列表对话框
+                this.dialogTableVisible = true
+            },
+            handlerSellListData(items, useItem) {
+                const newList = []
+                // items.forEach(item => {
+                //     newList.push({
+                //         img_src: item.img_src,                                        // 图片
+                //         background_image_url: item.background_image_url,              // 背景图片
+                //         paintwear: item.asset_info.paintwear,                         // 磨损
+                //         price: item.price + '元',                                     // 价格
+                //         lowest_bargain_price: item.lowest_bargain_price + '元',       // 最低特价
+                //         rarity_color: useItem.rarity_color                            // 颜色
+                //     })
+                // })
+                return newList
+            },
+
+
+
+
+
+            // 获取库存           : /api/commodity/Inventory/GetUserInventoryList
+            async loadDataKuCun() {
+                if (!this.authorization) {
+                    this.$message.warning('请求输入登录令牌!')
+                    return
+                }
+                let that = this
+                // https://api.youpin898.com/api/commodity/Inventory/GetUserInventoryList?GameId=730&TagsId=&PageIndex=1&PageSize=30&CommodityName=&closeMessage=true&ItemStatus=0
+                const params =  {
+                    "listType": "10",
+                    "gameId": "730",
+                    "pageIndex": this.query.page_num,
+                    "pageSize": this.query.page_size,
+                    "sortType": "0",
+                    "listSortType": "2",
+                    "stickersIsSort": false,
+                    "stickers": {},
+                    "keyWords": ""
+                }
+                if (this.query.search) {
+                    params.keyWords = this.query.search
+                }
+                axios.get("https://api.youpin898.com/api/commodity/Inventory/GetUserInventoryList", {
+                    headers: {
+                        authorization: this.authorization
+                    },
+                    params: params,
                 }).then(await function (res) {
                     if (res.data && res.data["Code"] === 0) {
                         that.listDataInfo['total'] = res.data['TotalCount']

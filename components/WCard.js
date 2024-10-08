@@ -4,12 +4,12 @@
 class WCard {
     body = {
         template: `
-            <el-card v-if="card.show" class="card">
+            <el-card v-if="card.show" class="card" @click="toPage(card.info, card.noTarget)">
                 <div v-if="card.type === 'code'">
                     <div :id="card.info"></div>
                 </div>
                 <div v-else-if="card.type === 'page'">
-                    <el-image :src="card.img || './source/imgs/card_img.png'" @click="toPage(card.info, card.noTarget)"></el-image>
+                    <el-image :src="card.img || './source/imgs/card_img.png'" ></el-image>
                     <div style="height: 20px;font-size: 12px; text-align: center">{{ card.title }}</div>
                 </div>
                 <el-tooltip class="item" effect="dark" :content="card.desc" placement="bottom">

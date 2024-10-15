@@ -1,56 +1,56 @@
 //2024-10-05 10:55
 
-//dwLocalPlayerController
+//dwLocalPlayerController  本地人物控制器
 0x1A0D8E8
-//dwLocalPlayerPawn
+//dwLocalPlayerPawn  本地人物
 0x1825138
-//dwEntityList
+//dwEntityList 实体列表
 0x19BDE30
-//dwViewAngles
+//dwViewAngles 本地人物朝向
 0x1A29DA0
-//dwViewMatrix
+//dwViewMatrix 本地人物视觉矩阵(用于制作ESP)
 0x1A1FF40
-//m_hPlayerPawn
+//m_hPlayerPawn 人物地址
 0x80C
-//m_iTeamNum
+//m_iTeamNum 队伍偏移
 0x3E3
-//m_ArmorValue
+//m_ArmorValue 护甲偏移
 0x23F4
-//m_iHealth
+//m_iHealth 血量偏移
 0x344
-//m_iIDEntIndex
+//m_iIDEntIndex 瞄准目标id偏移
 0x1450
-//m_fFlags
+//m_fFlags 人物状态 (跳跃,蹲下等动作
 0x3EC
-//m_iShotsFired
+//m_iShotsFired 子弹数
 0x23D4
-//m_vecVelocity
+//m_vecVelocity 人物移动速度
 0x400
-//m_entitySpottedState + m_bSpotted
+//m_entitySpottedState + m_bSpotted 判断墙体
 0x8
-//m_bIsScoped
+//m_bIsScoped 人物狙击枪开镜
 0x23C0
-//m_pClippingWeapon
+//m_pClippingWeapon 人物手持武器
 0x1398
-//m_pGameSceneNode
+//m_pGameSceneNode 人物世界坐标
 0x328
-//m_vecOrigin
+//m_vecOrigin 人物世界坐标
 0x88
-//m_aimPunchCache
+//m_aimPunchCache 人物手持武器后坐力
 0x1598
-//m_vecViewOffset
+//m_vecViewOffset 人物朝向偏移
 0xCA8
-//m_modelState + 0x80
+//m_modelState + 0x80  人物骨骼坐标
 0x1F0
-//m_iszPlayerName
+//m_iszPlayerName 本地人物名称
 0x660
-//m_pActionTrackingServices
+//m_pActionTrackingServices 回合伤害和击杀数
 0x730
-//m_iNumRoundKills
+//m_iNumRoundKills 回合伤害和击杀数
 0x110
-//m_unTotalRoundDamageDealt
+//m_unTotalRoundDamageDealt 回合伤害和击杀数
 0x118
-//m_AttributeManager + m_Item + m_iItemDefinitionIndex
+//m_AttributeManager + m_Item + m_iItemDefinitionIndex // 武器类型
 0x129A
-//m_angEyeAngles
+//m_angEyeAngles 人物朝向角度
 0x1430

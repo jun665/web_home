@@ -26,7 +26,7 @@
 0x23D4
 //m_vecVelocity 人物移动速度
 0x400
-//m_entitySpottedState + m_bSpotted 判断墙体
+//m_entitySpottedState + m_bSpotted 判断墙体（todo）
 0x8
 //m_bIsScoped 人物狙击枪开镜
 0x23C0
@@ -50,7 +50,7 @@
 0x110
 //m_unTotalRoundDamageDealt 回合伤害和击杀数
 0x118
-//m_AttributeManager + m_Item + m_iItemDefinitionIndex // 武器类型
+//m_AttributeManager + m_Item + m_iItemDefinitionIndex // 武器类型（todo）
 0x129A
 //m_angEyeAngles 人物朝向角度
 0x1430

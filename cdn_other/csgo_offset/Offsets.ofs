@@ -1,7 +1,7 @@
-//2024-10-05 10:55
+//2024-10-16 19:55
 
 //dwLocalPlayerController  本地人物控制器
-0x1A1A69011111
+0x1A1A690
 //dwLocalPlayerPawn  本地人物
 0x182FAE8
 //dwEntityList 实体列表
@@ -50,7 +50,7 @@
 0x110
 //m_unTotalRoundDamageDealt 回合伤害和击杀数
 0x118
-//m_AttributeManager + m_Item + m_iItemDefinitionIndex // 武器类型m_iItemDefinitionIndex（todo）
+//m_AttributeManager + m_Item + m_iItemDefinitionIndex // 武器类型m_iItemDefinitionIndex
 0x1BA
 //m_angEyeAngles 人物朝向角度
 0x1438

@@ -1,15 +1,15 @@
 //2024-10-16 19:55
 
 //dwLocalPlayerController  本地人物控制器
-0x1A1A690
+0x1A1A6C0
 //dwLocalPlayerPawn  本地人物
-0x182FAE8
+0x182FAD8
 //dwEntityList 实体列表
-0x19CA848
+0x19CA858
 //dwViewAngles 本地人物朝向
-0x1A36960
+0x1A36990
 //dwViewMatrix 本地人物视觉矩阵(用于制作ESP)
-0x1A2CAD0
+0x1A2CB00
 //m_hPlayerPawn 人物地址
 0x80C
 //m_iTeamNum 队伍偏移

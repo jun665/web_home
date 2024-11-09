@@ -127,6 +127,22 @@ const clazzCard = [
                 "img": "",
                 "desc": ""
             },
+            {
+                "title": "404页面",
+                "show": true,
+                "type": "page",
+                "info": "./pages/404/index.html",
+                "img": "",
+                "desc": ""
+            },
+            {
+                "title": "音乐播放",
+                "show": true,
+                "type": "page",
+                "info": "./pages/player/index.html",
+                "img": "",
+                "desc": ""
+            },
 
         ]
     }

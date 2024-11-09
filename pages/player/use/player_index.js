@@ -1,14 +1,14 @@
 
-let pan = "./img/pan.png";
-let play = "./img/play.png";
-let pause = "./img/pause.png";
-let add = "./img/add.png";
-let shlter = "./img/list_pan.png";
-let listPlay = "./img/list_play_hover.png";
-let state0 = "./img/state_0.png";
-let state1 = "./img/state_1.png";
-let talkicon1 = "./img/talkicon1.png";
-let talkicon2 = "./img/talkicon2.png";
+let pan = "./use/img/pan.png";
+let play = "./use/img/play.png";
+let pause = "./use/img/pause.png";
+let add = "./use/img/add.png";
+let shlter = "./use/img/list_pan.png";
+let listPlay = "./use/img/list_play_hover.png";
+let state0 = "./use/img/state_0.png";
+let state1 = "./use/img/state_1.png";
+let talkicon1 = "./use/img/talkicon1.png";
+let talkicon2 = "./use/img/talkicon2.png";
 
 
 
@@ -25,36 +25,19 @@ Vue.component('player', {
                     <div class="music_list">
                       <div class="list_l">
                         <ul class="music_type">
-                          <li v-for="(item, index) in musicTypeList" :key="index" @click="_getMusicType(item.id)" :class="{ type_active: item.id === thisMusicType }" >
-                            {{ item.name }}
-                          </li>
+                          <li v-for="(item, index) in musicTypeList" :key="index" @click="_getMusicType(item.id)" :class="{ type_active: item.id === thisMusicType }" >  {{ item.name }} </li>
                         </ul>
                         <div class="list_title">
                           <span style="font-size: 14px;">歌曲列表</span>
-                          <img
-                            :src="musicStateButton"
-                            alt=""
-                            class="music_state"
-                            @click="MusicStateChange"
-                          />
+                          <img :src="musicStateButton" alt="" class="music_state" @click="MusicStateChange"  />
+                          <!-- 搜索框 -->
                           <div class="music_search_box">
-                            <input
-                              type="text"
-                              class="music_search"
-                              v-model="musicSearchVal"
-                              placeholder="搜索歌曲"
-                            />
+                            <input type="text" class="music_search" v-model="musicSearchVal" placeholder="搜索歌曲" />
                             <transition name="music_search">
                               <ul class="search_list" v-if="musicSearchVal !== ''">
-                                <li
-                                  v-for="(item, index) in musicSearchList"
-                                  :key="index"
-                                  @click="ListAdd(item)"
-                                >
+                                <li v-for="(item, index) in musicSearchList" :key="index" @click="ListAdd(item)" >
                                   <span class="music_search_name">{{ item.name }}</span>
-                                  <span class="music_search_ar">{{
-                                    item.artists[0].name
-                                  }}</span>
+                                  <span class="music_search_ar">{{ item.artists[0].name }}</span>
                                 </li>
                               </ul>
                             </transition>
@@ -63,79 +46,39 @@ Vue.component('player', {
                         <div class="music_ul_title">
                           <span>歌曲</span><span>歌手</span><span>专辑</span>
                         </div>
+                        <!-- 音乐列表 -->
                         <ul class="list">
-                          <li
-                            v-for="(item, index) in thisMusicList"
-                            :key="index"
-                            @mouseover="ButtonActive(index)"
-                            @dblclick="ListPlay((thisListPage - 1) * 10 + index)"
-                          >
-                            <div
-                              class="this_music_shlter"
-                              v-if="(thisListPage - 1) * 10 + index === thisMusicIndex"
-                            ></div>
-                            <span>{{ item.name }}</span
-                            ><span>{{ item.ar[0].name }}</span
-                            ><span>{{ item.al.name }}</span>
+                          <li v-for="(item, index) in thisMusicList" :key="index" @mouseover="ButtonActive(index)" @dblclick="ListPlay((thisListPage - 1) * 10 + index)" >
+                            <div class="this_music_shlter" v-if="(thisListPage - 1) * 10 + index === thisMusicIndex" ></div>
+                            <span>{{ item.name }}</span>
+                            <span>{{ item.ar[0].name }}
+                            </span><span>{{ item.al.name }}</span>
                             <transition name="list_button">
-                              <div
-                                class="music_button"
-                                v-if="listButtonActiveIndex === index"
-                              >
-                                <div
-                                  class="list_play"
-                                  title="播放这首歌"
-                                  :style="{ backgroundImage: 'url(' + listPlay + ')' }"
-                                  @click="ListPlay((thisListPage - 1) * 10 + index)"
-                                ></div>
-                                <div
-                                  class="list_play"
-                                  title="添加到 My Songs"
-                                  :style="{ backgroundImage: 'url(' + add + ')' }"
-                                  @click="ListAdd(item)"
-                                  v-if="thisMusicType !== -1"
-                                ></div>
+                              <div class="music_button" v-if="listButtonActiveIndex === index" >
+                                <div class="list_play" title="播放这首歌" :style="{ backgroundImage: 'url(' + listPlay + ')' }" @click="ListPlay((thisListPage - 1) * 10 + index)"></div>
+                                <div class="list_play" title="添加到 My Songs" :style="{ backgroundImage: 'url(' + add + ')' }" @click="ListAdd(item)" v-if="thisMusicType !== -1"></div>
                               </div>
                             </transition>
                           </li>
                         </ul>
+                        <!-- 换页符 -->
                         <div class="list_page">
-                          <div
-                            class="page_last"
-                            v-if="thisListPage !== 1"
-                            @click="ListChange(true)"
-                          >
-                            &lt;
-                          </div>
-                          <div
-                            class="page_next"
-                            v-if="thisListPage !== Math.ceil(musicList.length / 10)"
-                            @click="ListChange(false)"
-                          >
-                            >
-                          </div>
+                          <div class="page_last" v-if="thisListPage !== 1" @click="ListChange(true)" > &lt; </div>
+                          <div class="page_next" v-if="thisListPage !== Math.ceil(musicList.length / 10)" @click="ListChange(false)" > ></div>
                         </div>
                       </div>
                       <div class="list_r">
                         <img class="music_list_bg" :src="musicImg" />
-                        <div
-                          class="music_list_shlter"
-                          :style="{ backgroundImage: 'url(' + shlter + ')' }"
-                        ></div>
+                        <div class="music_list_shlter" :style="{ backgroundImage: 'url(' + shlter + ')' }"></div>
+                        <!-- 评论列表 -->
                         <ul class="music_talk_list">
                           <li v-for="(item, index) in hotTalkList" :key="index">
                             <div class="talk_head">
-                              <img
-                                :src="item.user.avatarUrl"
-                                alt=""
-                                class="talk_head_img"
-                              />
+                              <img :src="item.user.avatarUrl" alt="" class="talk_head_img" />
                               <span class="talk_head_name">{{ item.user.nickname }}</span>
                             </div>
                             <p class="talk_content">
-                              <img class="talk_icon_l" :src="talkicon1" />
-                              {{ item.content }}
-                              <img class="talk_icon_r" :src="talkicon2" />
+                              <img class="talk_icon_l" :src="talkicon1" /> {{ item.content }} <img class="talk_icon_r" :src="talkicon2" />
                             </p>
                           </li>
                         </ul>
@@ -143,31 +86,14 @@ Vue.component('player', {
                     </div>
                   </div>
                 </transition>
+                <!-- 主页小组件 -->
                 <div class="bbox" :class="{ bbox_active: disActive }">
-                  <div
-                    class="pan"
-                    :style="{ backgroundImage: 'url(' + pan + ')' }"
-                    :class="{ pan_active: disActive }"
-                    @click="DisActive"
-                  >
+                  <div class="pan" :style="{ backgroundImage: 'url(' + pan + ')' }" :class="{ pan_active: disActive }"  @click="DisActive" >
                     <img :src="musicImg" alt="" class="pan_c" />
                   </div>
-                  <div
-                    class="box"
-                    :style="{ backgroundImage: 'url(' + musicImg + ')' }"
-                    :class="{ box_active: disActive }"
-                    @dblclick="DisList"
-                  >
-                    <div
-                      class="music_shlter_2"
-                      :style="{ backgroundImage: 'url(' + musicImg + ')' }"
-                      :class="{ shlter_active: disActive }"
-                    ></div>
-                    <div
-                      class="music_shlter"
-                      :style="{ backgroundImage: 'url(' + musicImg + ')' }"
-                      :class="{ shlter_active: disActive }"
-                    ></div>
+                  <div class="box" :style="{ backgroundImage: 'url(' + musicImg + ')' }" :class="{ box_active: disActive }" @dblclick="DisList" >
+                    <div class="music_shlter_2" :style="{ backgroundImage: 'url(' + musicImg + ')' }" :class="{ shlter_active: disActive }" ></div>
+                    <div class="music_shlter" :style="{ backgroundImage: 'url(' + musicImg + ')' }" :class="{ shlter_active: disActive }" ></div>
                     <div class="music_shlter_3"></div>
                     <div class="music_dis">
                       <div class="dis_list" @click="DisList">···</div>
@@ -175,14 +101,7 @@ Vue.component('player', {
                       <p class="music_intro">歌手: {{ musicName }}</p>
                       <ul class="music_words">
                         <div class="music_words_box" :style="{ top: wordsTop + 'px' }">
-                          <li
-                            v-for="(item, index) in musicWords"
-                            :key="index"
-                            class="music_word"
-                            :class="{ word_highlight: wordIndex === index }"
-                          >
-                            {{ item }}
-                          </li>
+                          <li v-for="(item, index) in musicWords" :key="index"  class="music_word" :class="{ word_highlight: wordIndex === index }" > {{ item }} </li>
                         </div>
                       </ul>
                     </div>
@@ -199,12 +118,7 @@ Vue.component('player', {
                       </div>
                     </div>
                   </div>
-                  <video
-                    id="music"
-                    autoplay="autoplay"
-                    :src="musicUrl"
-                    name="media"
-                  ></video>
+                  <video id="music" autoplay="autoplay" :src="musicUrl" name="media" ></video>
                 </div>
             </div>
           `,

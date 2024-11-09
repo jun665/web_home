@@ -1,4 +1,4 @@
-*{
+    *{
     padding: 0px;
     margin: 0px;
     text-decoration: none;
@@ -9,6 +9,7 @@
     width: 0px;
     height: 0px;
 }
+/* 小组件 */
 .bbox{
     width: 100px;
     height: 100px;
@@ -40,7 +41,7 @@
     width: 100%;
     height: 100%;
     position: absolute;
-    filter: blur(10px);
+    filter: blur(8px);
     background-size: 100% 100%;
     transition: all .5s;
     z-index: 99;
@@ -50,7 +51,7 @@
     width: 100%;
     height: 100%;
     position: absolute;
-    filter: blur(5px);
+    filter: blur(2px);
     background-size: 100% 100%;
     transition: all .5s;
     opacity: 0;
@@ -59,9 +60,9 @@
     width: 100%;
     height: 100%;
     position: absolute;
-    background-color: rgba(0,0,0,0.1);
+    background: -webkit-gradient(linear, 28% 23%, 90% 20%,from(rgba(71, 25, 124, 0.60)), to(rgba(23, 68, 120, 0.60)));
     transition: all .5s;
-    border-radius: 5px;
+    border-radius: 2px;
     filter: blur(2px);
 }
 .music_dis{
@@ -116,7 +117,7 @@
     width: 100%;
     height: 40px;
     text-align: center;
-    color: rgba(255,255,255,0.6);
+    color: rgba(255,255,255,0.8); /*作者*/
     line-height: 30px;
     font-size: 12px;
 }
@@ -248,11 +249,13 @@
 .dis_list-enter,.dis_list-leave-to{
     opacity: 0;
 }
+/* 大屏背景 */
 .list_box{
     width: 100%;
     height: 100%;
     position: fixed;
-    background: -webkit-radial-gradient(center, ellipse cover, #353138 0%,#1a181c 100%);
+    /*background: -webkit-radial-gradient(center, ellipse cover, #585559 5%, #242227 90%);*/
+    background: -webkit-gradient(linear, 18% 23%, 90% 20%,from(rgb(55, 35, 71)), to(rgb(35, 35, 76)));
     z-index: 499;
     transition: all .5s;
 }
@@ -278,6 +281,7 @@
     color: black;
     font-size: 12px;
 }
+/* 大屏关闭按钮 */
 .list_close{
     position: absolute;
     right: 20px;
@@ -291,6 +295,7 @@
     font-size: 20px;
     z-index: 1000;
 }
+/*音乐列表*/
 .music_list{
     width: 1320px;
     height: 840px;
@@ -311,6 +316,7 @@
     box-sizing: border-box;
     position: relative;
 }
+/* 歌曲列表 */
 .list_title{
     width: 100%;
     height: 40px;
@@ -331,6 +337,7 @@
     height: 25px;
     z-index: 500;
 }
+/* 搜索框 */
 .music_search{
     width: 100%;
     height: 100%;
@@ -342,6 +349,7 @@
     padding-right: 10px;
     font-size: 12px;
 }
+/* 搜索推荐 */
 .search_list{
     width: 100%;
     height: auto;
@@ -352,6 +360,7 @@
     border-radius: 2px;
     transition: all .5s;
 }
+/* 搜索推荐 文本*/
 .search_list li{
     width: 100%;
     height: 25px;
@@ -383,6 +392,7 @@
 .music_search-enter,.music_search-leave-to{
     opacity: 0;
 }
+/* 大屏列表 */
 .list{
     width: 100%;
     height: 620px;
@@ -512,6 +522,7 @@
     top: 90px;
     left: 25px;
 }
+/* 播放详情-评论 */
 .music_talk_list{
     width: 250px;
     height: auto;
@@ -521,13 +532,15 @@
 .music_talk_list li{
     width: 100%;
     height: auto;
-    margin-top: 10px;
+    margin-top: 8px;
 }
+
 .talk_head{
     width: 100%;
     height: 50px;
     position: relative;
 }
+/* 播放详情-评论头像 */
 .talk_head_img{
     width: 25px;
     height: 25px;
@@ -535,6 +548,7 @@
     border-radius: 100%;
     margin-top: 12.5px;
 }
+/* 播放详情-评论名称 */
 .talk_head_name{
     float: left;
     height: 50px;
@@ -542,6 +556,7 @@
     color: rgba(225,225,225,1);
     margin-left: 10px;
 }
+/* 播放详情-评论内容 */
 .talk_content{
     width: 100%;
     height: auto;
@@ -549,18 +564,21 @@
     box-sizing: border-box;
     padding: 15px;
     position: relative;
+    font-size: 12px;
 }
+/* 播放详情-评论引号 */
 .talk_icon_l{
     position: absolute;
-    width: 10px;
-    height: 10px;
+    width: 5px;
+    height: 5px;
     left: 0px;
     top: 0px;
+
 }
 .talk_icon_r{
     position: absolute;
-    width: 10px;
-    height: 10px;
+    width: 5px;
+    height: 5px;
     right: 0px;
     bottom: 0px;
 }

@@ -95,22 +95,27 @@ def create_ofset(file):
 
 if __name__ == '__main__':
     out = './output'
+    ofs = "Offsets.ofs"
     # 修改编码
     os.system('chcp 65001')
 
+
     # 删除output
     if os.path.exists(out):
-        shutil.rmtree(out)
-
+        p2 = shutil.rmtree(out)
+    print("--------------------- delete {}".format(out))
     # 执行exe
-    os.system('cs2-dumper.exe')
-
+    p3 = os.system('cs2-dumper.exe')
+    print("--------------------- build {}".format(out))
 
     # 生成ofs
     if os.path.exists(out):
-        create_ofset("Offsets.ofs")
-
+        create_ofset(ofs)
+        print("--------------------- build {}".format(ofs))
         # 执行Git提交
-        code2 = os.system('git add Offsets.ofs')
-        code2 = os.system('git commit -m "update ofs {}"'.format(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
+        os.system('git add Offsets.ofs')
+        os.system('git commit -m "update ofs {}"'.format(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
         os.system('git push')
+        print("--------------------- submit {} !!! END".format(ofs))
+    else:
+        print("--------------------- error build {} !!! END".format(out))

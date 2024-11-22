@@ -23,12 +23,60 @@
     <script src="./js/md.js"></script>
     <script src="./mds/list.js"></script>
 </head>
+<style>
+    .list_body {
+        width: 200px !important;
+        box-shadow: 0 2px 4px rgba(90, 93, 99, 0.55), 0 0 6px rgba(90, 93, 99, 0.55);
+        background-color: #C0C4CC;
+        border-radius: 5px;
+    }
+
+    .list_row{
+        height: 50px;
+        /*margin: 5px 2px 5px 2px;*/
+        padding: 5px;
+        border-radius: 3px;
+        border: 1px solid rgba(219, 219, 219, 0.5);
+        box-shadow: 0 0 4px 0 rgba(149,149,149,.3);
+        background-color: #1a181c;
+    }
+    .list_row:hover {
+        border: 0;
+        background: -webkit-gradient(linear, 8% 3%, 90% 20%,from(#2e1051), to(#12355e));
+        box-shadow: 0 0 3px 0 rgba(214, 145, 95, 0.53), 0 0 3px rgba(216, 102, 40, 0.87);
+
+    }
+    .list_row .name {
+        margin: 10px 0 2px 7px;
+        color: #959595;
+        font-size: 15px;
+    }
+
+    .main_body {
+        margin: 0px 0px 0px 10px;
+        box-shadow: 0 2px 4px rgba(90, 93, 99, 0.55), 0 0 6px rgba(90, 93, 99, 0.55);
+        border-radius: 5px;
+    }
+    .main_body:hover, .list_body:hover {
+        box-shadow: 0 2px 4px rgba(60, 62, 66, 0.99), 0 0 6px rgba(60, 62, 66, 0.99)
+    }
+</style>
 <body>
 
 <div id="app" style="height: 100vh;">
-    <div v-html="mdHtml">
+    <el-container>
+        <el-aside class="list_body">
+            <el-row class="list_row"  v-for="(item, index) in list" >
+                <div class="name" @click="loadData(item)" >
+                     {{item}}
+                </div>
+            </el-row>
+        </el-aside>
+        <el-main class="main_body">
+            <div v-html="mdHtml"> </div>
+        </el-main>
+    </el-container>
 
-    </div>
 
 
 </div>
@@ -41,16 +89,19 @@
         data() {
             return {
                 mdHtml: '',
+                list: mdList
             }
         },
         created(){
-            console.log(mdList)
-            this.loadData("./mds/图片处理.md" )
+            if (mdList.length > 0){
+                this.loadData(mdList[0])
+            }
+
         },
         methods:{
             async loadData(name) {
                 let that = this
-                axios.get(name, { headers: {}, params: {}, }).then(await function (res) {
+                axios.get(`./mds/${name}`, { headers: {}, params: {}, }).then(await function (res) {
                     const str = res.data
                     if (str) {
                         that.mdHtml = markdown.render(str)

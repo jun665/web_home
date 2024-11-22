@@ -54,6 +54,21 @@ const clazzCard = [
         ]
     },
     {
+        "className": "笔记",
+        "show": true,
+        "children": [
+            {
+                "title": "在线文档",
+                "show": true,
+                "type": "page",
+                "info": "./pages/page_md/index.html",
+                "img": "",
+                "desc": "这是一个markdown渲染示例。"
+            }
+        ]
+    },
+
+    {
         "className": "特效",
         "show": true,
         "children": [

@@ -4,6 +4,8 @@ class Message {
     static info = main.getLanguage()
 
     static getMarkdown(){
+
+        let uid = 1;
         // 设置主题
         function useTheme(theme, sefCss) {
             let oldStr, color
@@ -66,7 +68,7 @@ class Message {
         // 修改代码块
         function highlightBlock(str, lang) {
 
-            let uid = new Date().getTime();
+            uid = uid + 1;
             let copy = `
              let input = document.createElement('textarea');
              input.setAttribute('readonly', 'readonly');
@@ -132,6 +134,7 @@ class Message {
                     }
                 </style>
           `
+            let hStyle = ``
             return html + style + useTheme()
         }
         return window.markdownit({

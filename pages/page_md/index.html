@@ -21,6 +21,7 @@
     <script src="../../cdn/iconify-icon/iconify-icon.min.js"></script>
     <title>GPT工具</title>
     <script src="./js/md.js"></script>
+    <script src="./mds/list.js"></script>
 </head>
 <body>
 
@@ -35,7 +36,6 @@
 
 <script>
     let markdown = MDMessage.getMarkdown(MDMessage.IDEA_BLACK);
-
     new Vue({
         el: "#app",
         data() {
@@ -44,10 +44,10 @@
             }
         },
         created(){
+            console.log(mdList)
             this.loadData("./mds/图片处理.md" )
         },
         methods:{
-            // 获取库存           : /api/commodity/Inventory/GetUserInventoryList
             async loadData(name) {
                 let that = this
                 axios.get(name, { headers: {}, params: {}, }).then(await function (res) {
@@ -59,6 +59,8 @@
                     that.$message.error(err)
                 })
             },
+
+
         }
 
     })

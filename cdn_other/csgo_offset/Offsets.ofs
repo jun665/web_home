@@ -1,9 +1,9 @@
-//2025-01-22 20:36
+//2025-01-22 20:46
 
 // 本地人物控制器 -> client_dll.dwLocalPlayerController
 0x1A6A210
 // 本地人物 -> client_dll.dwLocalPlayerPawn
-0x186DDE8
+0x186DE00
 // 实体列表 -> client_dll.dwEntityList
 0x1A197E8
 // 本地人物朝向 -> client_dll.dwViewAngles

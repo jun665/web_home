@@ -1,15 +1,15 @@
-//2025-03-07 19:44
+//2025-03-12 19:44
 
 // 本地人物控制器 -> client_dll.dwLocalPlayerController
-0x1A88080
+0x1A890C0
 // 本地人物 -> client_dll.dwLocalPlayerPawn
-0x188AF20
+0x188BF30
 // 实体列表 -> client_dll.dwEntityList
-0x1A36A00
+0x1A37A30
 // 本地人物朝向 -> client_dll.dwViewAngles
-0x1AACA70
+0x1AADAA0
 // 本地人物视觉矩阵(用于制作ESP) -> client_dll.dwViewMatrix
-0x1AA27F0
+0x1AA3810
 // 人物地址 -> CCSPlayerController.m_hPlayerPawn
 0x80C
 // 队伍偏移 -> C_BaseEntity.m_iTeamNum
